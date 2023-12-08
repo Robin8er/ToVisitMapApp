@@ -19,6 +19,10 @@ class ToVisitListViewModel @Inject constructor(
         return toVisitListDAO.getAllToVisitItems()
     }
 
+    fun getToVisitItemsLike(name: String): Flow<List<ToVisitItem>> {
+        return toVisitListDAO.getToVisitItemsLike(name)
+    }
+
 //    suspend fun getFoodItemsNum(): Int {
 //        return toVisitListDAO.getFoodItemsNum()
 //    }
