@@ -63,11 +63,17 @@ import hu.ait.tovisitmapapp.data.ToVisitItem
 fun ToVisitListScreen(
     modifier: Modifier = Modifier,
     toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
+    name: String = "",
 //    onNavigateToSummary: (Int, Int, Int) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val toVisitList by toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
+    val toVisitList by
+    if (name == "") {
+        toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
+    } else {
+        toVisitListViewModel.getToVisitItemsLike(name).collectAsState(emptyList())
+    }
 
     var showAddToVisitDialog by rememberSaveable {
         mutableStateOf(false)
@@ -173,7 +179,6 @@ private fun AddNewToVisitItemForm(
             )
         }
 
-        var errorText by rememberSaveable {mutableStateOf("")}
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
 
@@ -244,7 +249,6 @@ private fun AddNewToVisitItemForm(
                 value = toVisitItemPriority,
                 onValueChange = {
                     toVisitItemPriority = it
-//                    validatePrice()
                 },
                 label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -259,7 +263,7 @@ private fun AddNewToVisitItemForm(
 
             if (priorityError) {
                 Text(
-                    text = errorText,
+                    text = "Priority cannot be empty.",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -296,7 +300,6 @@ private fun AddNewToVisitItemForm(
                         }
                         if (toVisitItemPriority == "") {
                             priorityError = true
-                            errorText = "Price cannot be empty."
                         }
                     }
                     else if (toVisitItemToEdit == null) {
