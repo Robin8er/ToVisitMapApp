@@ -67,7 +67,6 @@ import hu.ait.tovisitmapapp.data.ToVisitItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToVisitListScreen(
-    modifier: Modifier = Modifier,
     toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
     onNavigateToMap: () -> Unit,
     name: String = ""
@@ -300,7 +299,6 @@ private fun AddNewToVisitItemForm(
                         }
                     }
                     else if (toVisitItemToEdit == null) {
-//                        adjustPrice()
                         toVisitListViewModel.addToVisitItem(
                             ToVisitItem(
                                 0,
@@ -313,7 +311,6 @@ private fun AddNewToVisitItemForm(
                         )
                         onDialogDismiss()
                     } else {
-//                        adjustPrice()
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
