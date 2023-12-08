@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -38,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -108,10 +111,6 @@ fun MapScreen(
         mutableStateOf(false)
     }
 
-    var searchName by remember {
-        mutableStateOf("")
-    }
-
     Column {
         TopAppBar(
             title = {
@@ -119,9 +118,14 @@ fun MapScreen(
             },
             actions = {
                 IconButton(onClick = {
-                    showSearchDialog = true
+                    onNavigateToToVisitList("")
                 }) {
                     Icon(Icons.Filled.Info, null)
+                }
+                IconButton(onClick = {
+                    showSearchDialog = true
+                }) {
+                    Icon(Icons.Filled.Search, null)
                 }
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -280,6 +284,10 @@ private fun SearchToVisitListDialog(
             mutableStateOf("")
         }
 
+        var nameError by rememberSaveable {
+            mutableStateOf(false)
+        }
+
         Column(
             modifier = Modifier
                 .padding(10.dp)
@@ -294,15 +302,33 @@ private fun SearchToVisitListDialog(
                 value = searchName,
                 onValueChange = {
                     searchName = it
+                    nameError = searchName == ""
                 },
-                label = { Text(text = "Enter search parameter - leave empty if none.") }
+                label = { Text(text = "Search for - leave empty") },
+                trailingIcon = {
+                    if (nameError) {
+                    Icon(
+                        Icons.Filled.Warning, "Error",
+                        tint = MaterialTheme.colorScheme.error)
+                }}
             )
+
+            if (nameError) {
+                Text(
+                    text = "Search field cannot be empty.",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
 
             Button(onClick = {
                 if (searchName != "") {
                     searchName = "/$searchName"
+                    onNavigateToToVisitList(searchName)
+                } else {
+                    nameError = true
                 }
-                onNavigateToToVisitList(searchName)
             }) {
                 Text(text = "Search")
             }
