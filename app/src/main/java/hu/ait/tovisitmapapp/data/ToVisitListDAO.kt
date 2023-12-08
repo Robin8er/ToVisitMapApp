@@ -17,6 +17,9 @@ interface ToVisitListDAO {
     @Query("SELECT * from tovisittable WHERE id = :id")
     fun getToVisitItem(id: Int): Flow<ToVisitItem>
 
+    @Query("SELECT * FROM tovisittable WHERE name LIKE name = :name")
+    fun getToVisitItemsLike(name: String): Flow<List<ToVisitItem>>
+
 //    @Query("""SELECT COUNT(*) from tovisittable WHERE category="FOOD"""")
 //    suspend fun getFoodItemsNum(): Int
 //
