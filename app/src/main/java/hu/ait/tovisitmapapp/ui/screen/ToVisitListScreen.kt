@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Warning
@@ -50,6 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
@@ -63,6 +65,7 @@ import hu.ait.tovisitmapapp.data.ToVisitItem
 fun ToVisitListScreen(
     modifier: Modifier = Modifier,
     toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
+    onNavigateToMap: () -> Unit,
     name: String = ""
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -100,6 +103,13 @@ fun ToVisitListScreen(
                     }) {
                         Icon(Icons.Filled.AddCircle, null)
                     }
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = ("to map"),
+                        modifier = Modifier.clickable {
+                            onNavigateToMap()
+                        }
+                    )
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer
