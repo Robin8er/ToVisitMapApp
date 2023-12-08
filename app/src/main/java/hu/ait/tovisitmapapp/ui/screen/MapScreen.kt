@@ -7,9 +7,17 @@ import android.location.Location
 import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -79,6 +88,8 @@ fun MapScreen(
     }
 
     Column {
+        
+
         val fineLocationPermissionState = rememberPermissionState(
             Manifest.permission.ACCESS_FINE_LOCATION
         )
@@ -196,16 +207,16 @@ fun MapScreen(
                 )
             }
 
-            Polyline( // also Polygon - connects last and first points!
-                points = listOf(
-                    LatLng(47.0, 19.0),
-                    LatLng(45.0, 18.0),
-                    LatLng(49.0, 23.0),
-                ),
-                color = androidx.compose.ui.graphics.Color.Red,
-                visible = true,
-                width = 10f
-            )
+//            Polyline( // also Polygon - connects last and first points!
+//                points = listOf(
+//                    LatLng(47.0, 19.0),
+//                    LatLng(45.0, 18.0),
+//                    LatLng(49.0, 23.0),
+//                ),
+//                color = androidx.compose.ui.graphics.Color.Red,
+//                visible = true,
+//                width = 10f
+//            )
 
         }
     }

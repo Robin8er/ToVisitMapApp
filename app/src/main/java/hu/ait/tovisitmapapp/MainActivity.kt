@@ -33,8 +33,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen()
-                    //ToVisitMapAppNavHost()
+                    //MapScreen()
+                    ToVisitMapAppNavHost()
                 }
             }
         }
@@ -45,13 +45,12 @@ class MainActivity : ComponentActivity() {
 fun ToVisitMapAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "map"
+    startDestination: String = "tovisitlist"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
         composable("tovisitlist") { ToVisitListScreen(
-
             onNavigateToMap = {
                 navController.navigate("map")
             }
