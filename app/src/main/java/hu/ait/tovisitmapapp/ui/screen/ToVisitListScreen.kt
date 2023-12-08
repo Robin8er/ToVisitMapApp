@@ -1,6 +1,7 @@
 package hu.ait.tovisitmapapp.ui.screen
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -51,19 +53,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToVisitListScreen(
-    modifier: Modifier = Modifier,
     toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
     onNavigateToMap: () -> Unit,
     name: String = ""
@@ -252,11 +255,24 @@ private fun AddNewToVisitItemForm(
 
             SpinnerSample(
                 listOf("Dining",
-                    "Entertainment", "Museum", "Nature"
+                    "Study", "Entertainment", "Other"
                 ),
-                preselected = "Dining",
+                preselected =
+                when (toVisitItemCategory)
+                    {
+                        ToVisitCategory.DINING -> "Dining"
+                        ToVisitCategory.STUDY -> "Study"
+                        ToVisitCategory.ENTERTAINMENT -> "Entertainment"
+                        else -> "Other"
+                    },
                 onSelectionChanged = {
-                    toVisitItemCategory = ToVisitCategory.DINING
+                    toVisitItemCategory =
+                        when (it) {
+                            "Dining" -> ToVisitCategory.DINING
+                            "Study" -> ToVisitCategory.STUDY
+                            "Entertainment" -> ToVisitCategory.ENTERTAINMENT
+                            else -> ToVisitCategory.OTHER
+                        }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -283,7 +299,6 @@ private fun AddNewToVisitItemForm(
                         }
                     }
                     else if (toVisitItemToEdit == null) {
-//                        adjustPrice()
                         toVisitListViewModel.addToVisitItem(
                             ToVisitItem(
                                 0,
@@ -296,7 +311,6 @@ private fun AddNewToVisitItemForm(
                         )
                         onDialogDismiss()
                     } else {
-//                        adjustPrice()
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
@@ -345,13 +359,13 @@ fun ToVisitItemCard(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                Image(
-//                    painter = painterResource(id = toVisitItem.category.getIcon()), // called using int id
-//                    contentDescription = stringResource(R.string.priority),
-//                    modifier = Modifier
-//                        .size(40.dp)
-//                        .padding(end = 10.dp)
-//                )
+                Image(
+                    painter = painterResource(id = toVisitItem.category.getIcon()), // called using int id
+                    contentDescription = "Category",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 10.dp)
+                )
                 Column {
                     Text(toVisitItem.name, modifier = Modifier.fillMaxWidth(0.4f))
                     Text(toVisitItem.priority, modifier = Modifier.fillMaxWidth(0.4f))
