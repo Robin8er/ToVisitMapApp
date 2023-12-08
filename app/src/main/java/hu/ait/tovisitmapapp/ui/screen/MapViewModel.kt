@@ -26,6 +26,7 @@ class MyMapViewModel @Inject constructor(
 
     fun addMarkerPosition(latLng: LatLng) {
         _markerPositionList.add(latLng)
+
     }
 
     // --- location related functions!

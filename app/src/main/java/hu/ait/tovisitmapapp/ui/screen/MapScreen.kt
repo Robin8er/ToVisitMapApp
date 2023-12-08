@@ -136,9 +136,9 @@ fun MapScreen(
                 }) {
                     Text(text = "Start location monitoring")
                 }
-                Text(
-                    text = "Location: ${getLocationText(mapViewModel.locationState.value)}"
-                )
+//                Text(
+//                    text = "Location: ${getLocationText(mapViewModel.locationState.value)}"
+//                )
             }
 
         } else {
@@ -167,7 +167,7 @@ fun MapScreen(
             )
         })
 
-        Text(text = geocodeText)
+        //Text(text = geocodeText)
 
 
         GoogleMap(
@@ -177,18 +177,20 @@ fun MapScreen(
             uiSettings = uiSettings,
             onMapClick = {
                 mapViewModel.addMarkerPosition(it)
+                markerInfoDialog(it)
 
-//                val cameraPosition = CameraPosition.Builder()
-//                    .target(it)
-//                    .build()
-
-                val random = Random(System.currentTimeMillis())
                 val cameraPosition = CameraPosition.Builder()
                     .target(it)
-                    .zoom(1f + random.nextInt(5))
-                    .tilt(30f + random.nextInt(15))
-                    .bearing(-45f + random.nextInt(90))
+                    .zoom(5f)
                     .build()
+
+//                val random = Random(System.currentTimeMillis())
+//                val cameraPosition = CameraPosition.Builder()
+//                    .target(it)
+//                    .zoom(1f + random.nextInt(5))
+//                    .tilt(30f + random.nextInt(15))
+//                    .bearing(-45f + random.nextInt(90))
+//                    .build()
 
                 coroutineScope.launch {
                     cameraState.animate(
@@ -202,60 +204,70 @@ fun MapScreen(
             Marker(
                 state = MarkerState(LatLng(47.0, 19.0)),
                 title = "Marker demo",
-                snippet = "Hungary, population 9.7M",
-                draggable = true
+                snippet = "Hungary, population 9.7M"
+                //draggable = true
 //                icon =
             )
 
             for (position in mapViewModel.getMarkersList()) {
                 Marker(
                     state = MarkerState(position = position),
-                    title = "Title",
-                    onClick = {
-                        val geocoder = Geocoder(context, Locale.getDefault())
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            geocoder.getFromLocation(
-                                it.position.latitude,
-                                it.position.longitude,
-                                3,
-                                object : Geocoder.GeocodeListener {
-                                    override fun onGeocode(addrs: MutableList<Address>) {
-                                        val addr =
-                                            "${addrs[0].getAddressLine(0)}; ${
-                                                addrs[0].getAddressLine(
-                                                    1
-                                                )
-                                            }; ${addrs[0].getAddressLine(2)}"
-
-                                        geocodeText = addr
-                                    }
-
-                                    override fun onError(errorMessage: String?) {
-                                        geocodeText = errorMessage!!
-                                        super.onError(errorMessage)
-
-                                    }
-                                })
-                        }
-                        true
-                    }
+                    title = "Name that the user gives location here",
+                    snippet = "information that user gives..."
+//                    onClick = {
+//                        val geocoder = Geocoder(context, Locale.getDefault())
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                            geocoder.getFromLocation(
+//                                it.position.latitude,
+//                                it.position.longitude,
+//                                3,
+//                                object : Geocoder.GeocodeListener {
+//                                    override fun onGeocode(addrs: MutableList<Address>) {
+//                                        val addr =
+//                                            "${addrs[0].getAddressLine(0)}; ${
+//                                                addrs[0].getAddressLine(
+//                                                    1
+//                                                )
+//                                            }; ${addrs[0].getAddressLine(2)}"
+//
+//                                        geocodeText = addr
+//
+//                                    }
+//
+//                                    override fun onError(errorMessage: String?) {
+//                                        geocodeText = errorMessage!!
+//                                        super.onError(errorMessage)
+//
+//                                    }
+//                                })
+//                        }
+//                        true
+//                    }
                 )
             }
 
-            Polyline( // also Polygon - connects last and first points!
-                points = listOf(
-                    LatLng(47.0, 19.0),
-                    LatLng(45.0, 18.0),
-                    LatLng(49.0, 23.0),
-                ),
-                color = androidx.compose.ui.graphics.Color.Red,
-                visible = true,
-                width = 10f
-            )
+//            Polyline( // also Polygon - connects last and first points!
+//                points = listOf(
+//                    LatLng(47.0, 19.0),
+//                    LatLng(45.0, 18.0),
+//                    LatLng(49.0, 23.0),
+//                ),
+//                color = androidx.compose.ui.graphics.Color.Red,
+//                visible = true,
+//                width = 10f
+//            )
 
         }
     }
 }
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun markerInfoDialog(
+    onDialogDismiss: () -> Unit = {}
+
+)
+
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -295,13 +307,13 @@ private fun SearchToVisitListDialog(
         }
     }
 }
-
-fun getLocationText(location: Location?): String {
-    return """
-       Lat: ${location?.latitude}
-       Lng: ${location?.longitude}
-       Alt: ${location?.altitude}
-       Speed: ${location?.speed}
-       Accuracy: ${location?.accuracy}
-    """.trimIndent()
-}
+//
+//fun getLocationText(location: Location?): String {
+//    return """
+//       Lat: ${location?.latitude}
+//       Lng: ${location?.longitude}
+//       Alt: ${location?.altitude}
+//       Speed: ${location?.speed}
+//       Accuracy: ${location?.accuracy}
+//    """.trimIndent()
+//}
