@@ -17,11 +17,12 @@ data class ToVisitItem(
 ) : Serializable
 
 enum class ToVisitCategory {
-    DINING, ENTERTAINMENT, MUSEUM, NATURE; //TODO: think of categories
+    DINING, STUDY, ENTERTAINMENT, OTHER;
 
-//    fun getIcon(): Int {
-//        return if (this == FOOD) R.drawable.food
-//        else if (this == ELECTRONICS) R.drawable.electronics
-//        else R.drawable.book
-//    }
+    fun getIcon(): Int {
+        return if (this == DINING) R.drawable.dining
+        else if (this == STUDY) R.drawable.study
+        else if (this == ENTERTAINMENT) R.drawable.entertainment
+        else R.drawable.other
+    }
 }
