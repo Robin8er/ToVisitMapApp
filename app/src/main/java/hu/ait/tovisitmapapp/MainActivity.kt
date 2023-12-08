@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
+import hu.ait.tovisitmapapp.ui.screen.MapScreen
 import hu.ait.tovisitmapapp.ui.screen.ToVisitListScreen
 import hu.ait.tovisitmapapp.ui.theme.ToVisitMapAppTheme
 
@@ -32,7 +33,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ToVisitMapAppNavHost()
+                    MapScreen()
+                    //ToVisitMapAppNavHost()
                 }
             }
         }
@@ -43,15 +45,33 @@ class MainActivity : ComponentActivity() {
 fun ToVisitMapAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "tovisitlist"
+    startDestination: String = "map"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
         composable("tovisitlist") { ToVisitListScreen(
+
+            onNavigateToMap = {
+                navController.navigate("map")
+            }
 //            onNavigateToSummary = {food, electronics, book ->
 //                navController.navigate("summary/$food/$electronics/$book")}
         )}
+
+        composable("map",
+//            arguments = listOf(
+//                navArgument("cityname"){type = NavType.StringType}
+//            )
+        ) {
+            MapScreen()
+//            val cityName = it.arguments?.getString("cityname")
+//            if (cityName != null) {
+//                WeatherScreen(cityName = cityName
+//                )
+//            }
+        }
+    }
 
 //        composable("waitingscreen") { SplashScreen(
 //            onNavigateToList = {navController.navigate("shoppinglist")}
@@ -76,5 +96,5 @@ fun ToVisitMapAppNavHost(
 //            }
 //        }
     }
-}
+
 
