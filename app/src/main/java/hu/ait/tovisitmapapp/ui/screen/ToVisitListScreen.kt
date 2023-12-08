@@ -65,11 +65,17 @@ import hu.ait.tovisitmapapp.data.ToVisitItem
 fun ToVisitListScreen(
     modifier: Modifier = Modifier,
     toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
-    onNavigateToMap: () -> Unit
+    onNavigateToMap: () -> Unit,
+    name: String = ""
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val toVisitList by toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
+    val toVisitList by
+    if (name == "") {
+        toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
+    } else {
+        toVisitListViewModel.getToVisitItemsLike(name).collectAsState(emptyList())
+    }
 
     var showAddToVisitDialog by rememberSaveable {
         mutableStateOf(false)
@@ -91,18 +97,6 @@ fun ToVisitListScreen(
                     }) {
                         Icon(Icons.Filled.Delete, null)
                     }
-//                    IconButton(onClick = {
-//                        coroutineScope.launch {
-//                            val foodItems = toVisitListViewModel.getFoodItemsNum()
-//                            val electronicsItems = toVisitListViewModel.getElectronicsItemsNum()
-//                            val bookItems = toVisitListViewModel.getBookItemsNum()
-//                            onNavigateToSummary(
-//                                foodItems, electronicsItems, bookItems
-//                            )
-//                        }
-//                    }) {
-//                        Icon(Icons.Filled.Info, null)
-//                    }
                     IconButton(onClick = {
                         toVisitItemToEdit = null
                         showAddToVisitDialog = true
@@ -119,7 +113,8 @@ fun ToVisitListScreen(
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ))
+                )
+            )
         }
 
         Column(modifier = Modifier.padding(10.dp)) {
@@ -182,27 +177,8 @@ private fun AddNewToVisitItemForm(
             )
         }
 
-        var errorText by rememberSaveable {mutableStateOf("")}
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
-
-//        fun validatePrice() {
-//            try {
-//                val floatPrice = toVisitItemPriority.toFloat()
-//                priorityError = floatPrice < 0f
-//                if (priorityError) {
-//                    errorText = "Please enter a positive number."
-//                }
-//            } catch (e: Exception) {
-//                priorityError = true
-//                errorText = "Please enter a valid number."
-//            }
-//        }
-
-//        fun adjustPrice() {
-//            var floatPrice = toVisitItemPriority.toFloat()
-//            toVisitItemPriority = floatPrice.toString()
-//        }
 
         Column(
             modifier = Modifier
@@ -253,7 +229,6 @@ private fun AddNewToVisitItemForm(
                 value = toVisitItemPriority,
                 onValueChange = {
                     toVisitItemPriority = it
-//                    validatePrice()
                 },
                 label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -268,7 +243,7 @@ private fun AddNewToVisitItemForm(
 
             if (priorityError) {
                 Text(
-                    text = errorText,
+                    text = "Priority cannot be empty.",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -305,7 +280,6 @@ private fun AddNewToVisitItemForm(
                         }
                         if (toVisitItemPriority == "") {
                             priorityError = true
-                            errorText = "Price cannot be empty."
                         }
                     }
                     else if (toVisitItemToEdit == null) {

@@ -5,15 +5,26 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,10 +34,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -48,7 +63,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.Random
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     mapViewModel: MyMapViewModel = hiltViewModel()
@@ -87,8 +102,28 @@ fun MapScreen(
         mutableStateOf("")
     }
 
+    var showSearchDialog by remember {
+        mutableStateOf(false)
+    }
+
     Column {
-        
+        TopAppBar(
+            title = {
+                Text("To Visit List")
+            },
+            actions = {
+                IconButton(onClick = {
+                    showSearchDialog = true
+                }) {
+                    Icon(Icons.Filled.Info, null)
+                }
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+        )
+
+
 
         val fineLocationPermissionState = rememberPermissionState(
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -207,17 +242,56 @@ fun MapScreen(
                 )
             }
 
-//            Polyline( // also Polygon - connects last and first points!
-//                points = listOf(
-//                    LatLng(47.0, 19.0),
-//                    LatLng(45.0, 18.0),
-//                    LatLng(49.0, 23.0),
-//                ),
-//                color = androidx.compose.ui.graphics.Color.Red,
-//                visible = true,
-//                width = 10f
-//            )
+            Polyline( // also Polygon - connects last and first points!
+                points = listOf(
+                    LatLng(47.0, 19.0),
+                    LatLng(45.0, 18.0),
+                    LatLng(49.0, 23.0),
+                ),
+                color = androidx.compose.ui.graphics.Color.Red,
+                visible = true,
+                width = 10f
+            )
 
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SearchToVisitListDialog(
+    onDialogDismiss: () -> Unit = {}
+) {
+    Dialog(
+        onDismissRequest = onDialogDismiss
+    ) {
+        var searchName by rememberSaveable {
+            mutableStateOf("")
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .background(
+                    MaterialTheme.colorScheme.secondaryContainer,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(10.dp)
+        ) {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = searchName,
+                onValueChange = {
+                    searchName = it
+                },
+                label = { Text(text = "Enter search parameter - leave empty if none.") }
+            )
+        }
+
+        Button(onClick = {
+
+        }) {
+            Text(text = "Search")
         }
     }
 }
