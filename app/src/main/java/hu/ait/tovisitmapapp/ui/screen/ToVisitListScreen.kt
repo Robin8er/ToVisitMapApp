@@ -113,7 +113,8 @@ fun ToVisitListScreen(
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ))
+                )
+            )
         }
 
         Column(modifier = Modifier.padding(10.dp)) {
