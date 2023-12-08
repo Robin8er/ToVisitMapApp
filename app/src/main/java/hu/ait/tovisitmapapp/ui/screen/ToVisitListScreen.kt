@@ -63,8 +63,7 @@ import hu.ait.tovisitmapapp.data.ToVisitItem
 fun ToVisitListScreen(
     modifier: Modifier = Modifier,
     toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
-    name: String = "",
-//    onNavigateToSummary: (Int, Int, Int) -> Unit
+    name: String = ""
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -95,18 +94,6 @@ fun ToVisitListScreen(
                     }) {
                         Icon(Icons.Filled.Delete, null)
                     }
-//                    IconButton(onClick = {
-//                        coroutineScope.launch {
-//                            val foodItems = toVisitListViewModel.getFoodItemsNum()
-//                            val electronicsItems = toVisitListViewModel.getElectronicsItemsNum()
-//                            val bookItems = toVisitListViewModel.getBookItemsNum()
-//                            onNavigateToSummary(
-//                                foodItems, electronicsItems, bookItems
-//                            )
-//                        }
-//                    }) {
-//                        Icon(Icons.Filled.Info, null)
-//                    }
                     IconButton(onClick = {
                         toVisitItemToEdit = null
                         showAddToVisitDialog = true
@@ -181,24 +168,6 @@ private fun AddNewToVisitItemForm(
 
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
-
-//        fun validatePrice() {
-//            try {
-//                val floatPrice = toVisitItemPriority.toFloat()
-//                priorityError = floatPrice < 0f
-//                if (priorityError) {
-//                    errorText = "Please enter a positive number."
-//                }
-//            } catch (e: Exception) {
-//                priorityError = true
-//                errorText = "Please enter a valid number."
-//            }
-//        }
-
-//        fun adjustPrice() {
-//            var floatPrice = toVisitItemPriority.toFloat()
-//            toVisitItemPriority = floatPrice.toString()
-//        }
 
         Column(
             modifier = Modifier
