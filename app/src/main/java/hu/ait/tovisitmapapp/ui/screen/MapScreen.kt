@@ -1,6 +1,7 @@
 package hu.ait.tovisitmapapp.ui.screen
 
 import android.Manifest
+import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -61,6 +64,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.Random
+import androidx.compose.runtime.LaunchedEffect as LaunchedEffect1
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -128,7 +132,6 @@ fun MapScreen(
         )
 
 
-
         val fineLocationPermissionState = rememberPermissionState(
             Manifest.permission.ACCESS_FINE_LOCATION
         )
@@ -177,7 +180,6 @@ fun MapScreen(
             SearchToVisitListDialog({ showSearchDialog = false }, onNavigateToToVisitList)
         }
 
-
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraState,
@@ -185,20 +187,12 @@ fun MapScreen(
             uiSettings = uiSettings,
             onMapClick = {
                 mapViewModel.addMarkerPosition(it)
-                markerInfoDialog(it)
+                //add a dialogue here!!! and the info added creates a card on the other screen
 
                 val cameraPosition = CameraPosition.Builder()
                     .target(it)
                     .zoom(5f)
                     .build()
-
-//                val random = Random(System.currentTimeMillis())
-//                val cameraPosition = CameraPosition.Builder()
-//                    .target(it)
-//                    .zoom(1f + random.nextInt(5))
-//                    .tilt(30f + random.nextInt(15))
-//                    .bearing(-45f + random.nextInt(90))
-//                    .build()
 
                 coroutineScope.launch {
                     cameraState.animate(
@@ -209,72 +203,18 @@ fun MapScreen(
         ) {
 
 
-            Marker(
-                state = MarkerState(LatLng(47.0, 19.0)),
-                title = "Marker demo",
-                snippet = "Hungary, population 9.7M"
-                //draggable = true
-//                icon =
-            )
-
             for (position in mapViewModel.getMarkersList()) {
                 Marker(
                     state = MarkerState(position = position),
                     title = "Name that the user gives location here",
                     snippet = "information that user gives..."
-//                    onClick = {
-//                        val geocoder = Geocoder(context, Locale.getDefault())
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                            geocoder.getFromLocation(
-//                                it.position.latitude,
-//                                it.position.longitude,
-//                                3,
-//                                object : Geocoder.GeocodeListener {
-//                                    override fun onGeocode(addrs: MutableList<Address>) {
-//                                        val addr =
-//                                            "${addrs[0].getAddressLine(0)}; ${
-//                                                addrs[0].getAddressLine(
-//                                                    1
-//                                                )
-//                                            }; ${addrs[0].getAddressLine(2)}"
-//
-//                                        geocodeText = addr
-//
-//                                    }
-//
-//                                    override fun onError(errorMessage: String?) {
-//                                        geocodeText = errorMessage!!
-//                                        super.onError(errorMessage)
-//
-//                                    }
-//                                })
-//                        }
-//                        true
-//                    }
                 )
             }
-
-//            Polyline( // also Polygon - connects last and first points!
-//                points = listOf(
-//                    LatLng(47.0, 19.0),
-//                    LatLng(45.0, 18.0),
-//                    LatLng(49.0, 23.0),
-//                ),
-//                color = androidx.compose.ui.graphics.Color.Red,
-//                visible = true,
-//                width = 10f
-//            )
-
         }
     }
 }
 
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun markerInfoDialog(
-    onDialogDismiss: () -> Unit = {}
 
-)
 
 
 @Composable
