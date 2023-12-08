@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //MapScreen()
                     ToVisitMapAppNavHost()
                 }
             }
@@ -45,11 +44,34 @@ class MainActivity : ComponentActivity() {
 fun ToVisitMapAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "tovisitlist"
+    startDestination: String = "map"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
+        composable("tovisitlist") {
+            ToVisitListScreen(
+                onNavigateToMap = {
+                    navController.navigate("map")
+                }
+            )
+        }
+
+        composable("tovisitlist/{name}",
+            arguments = listOf(
+                navArgument("name"){type = NavType.StringType}
+            )) {
+            var name = it.arguments?.getString("name")
+            if (name == null) {
+                name = ""
+            }
+            ToVisitListScreen(
+                name = name,
+                onNavigateToMap = {
+                    navController.navigate("map")
+                }
+            )
+        }
         composable("tovisitlist") { ToVisitListScreen(
             onNavigateToMap = {
                 navController.navigate("map")
@@ -58,17 +80,12 @@ fun ToVisitMapAppNavHost(
 //                navController.navigate("summary/$food/$electronics/$book")}
         )}
 
-        composable("map",
-//            arguments = listOf(
-//                navArgument("cityname"){type = NavType.StringType}
-//            )
-        ) {
-            MapScreen()
-//            val cityName = it.arguments?.getString("cityname")
-//            if (cityName != null) {
-//                WeatherScreen(cityName = cityName
-//                )
-//            }
+        composable("map") {
+            MapScreen(
+                onNavigateToToVisitList = {searchName ->
+                    navController.navigate("tovisitlist$searchName")
+                }
+            )
         }
     }
 
