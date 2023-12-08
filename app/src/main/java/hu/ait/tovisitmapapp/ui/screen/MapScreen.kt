@@ -6,7 +6,6 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,7 +67,8 @@ import java.util.Random
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    mapViewModel: MyMapViewModel = hiltViewModel()
+    mapViewModel: MyMapViewModel = hiltViewModel(),
+    onNavigateToToVisitList: (String) -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -106,6 +106,10 @@ fun MapScreen(
 
     var showSearchDialog by remember {
         mutableStateOf(false)
+    }
+
+    var searchName by remember {
+        mutableStateOf("")
     }
 
     Column {
@@ -170,6 +174,10 @@ fun MapScreen(
         })
 
         Text(text = geocodeText)
+
+        if (showSearchDialog) {
+            SearchToVisitListDialog({ showSearchDialog = false }, onNavigateToToVisitList)
+        }
 
 
         GoogleMap(
@@ -262,7 +270,8 @@ fun MapScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun SearchToVisitListDialog(
-    onDialogDismiss: () -> Unit = {}
+    onDialogDismiss: () -> Unit = {},
+    onNavigateToToVisitList: (String) -> Unit
 ) {
     Dialog(
         onDismissRequest = onDialogDismiss
@@ -288,12 +297,15 @@ private fun SearchToVisitListDialog(
                 },
                 label = { Text(text = "Enter search parameter - leave empty if none.") }
             )
-        }
 
-        Button(onClick = {
-
-        }) {
-            Text(text = "Search")
+            Button(onClick = {
+                if (searchName != "") {
+                    searchName = "/$searchName"
+                }
+                onNavigateToToVisitList(searchName)
+            }) {
+                Text(text = "Search")
+            }
         }
     }
 }

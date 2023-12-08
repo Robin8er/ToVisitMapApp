@@ -33,8 +33,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen()
-                    //ToVisitMapAppNavHost()
+                    ToVisitMapAppNavHost()
                 }
             }
         }
@@ -50,26 +49,36 @@ fun ToVisitMapAppNavHost(
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
-        composable("tovisitlist") { ToVisitListScreen(
+        composable("tovisitlist") {
+            ToVisitListScreen(
+                onNavigateToMap = {
+                    navController.navigate("map")
+                }
+            )
+        }
 
-            onNavigateToMap = {
-                navController.navigate("map")
+        composable("tovisitlist/{name}",
+            arguments = listOf(
+                navArgument("name"){type = NavType.StringType}
+            )) {
+            var name = it.arguments?.getString("name")
+            if (name == null) {
+                name = ""
             }
-//            onNavigateToSummary = {food, electronics, book ->
-//                navController.navigate("summary/$food/$electronics/$book")}
-        )}
+            ToVisitListScreen(
+                name = name,
+                onNavigateToMap = {
+                    navController.navigate("map")
+                }
+            )
+        }
 
-        composable("map",
-//            arguments = listOf(
-//                navArgument("cityname"){type = NavType.StringType}
-//            )
-        ) {
-            MapScreen()
-//            val cityName = it.arguments?.getString("cityname")
-//            if (cityName != null) {
-//                WeatherScreen(cityName = cityName
-//                )
-//            }
+        composable("map") {
+            MapScreen(
+                onNavigateToToVisitList = {searchName ->
+                    navController.navigate("tovisitlist$searchName")
+                }
+            )
         }
     }
 
