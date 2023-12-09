@@ -42,11 +42,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -201,6 +203,10 @@ private fun AddNewToVisitItemForm(
             mutableDoubleStateOf(toVisitItemToEdit?.longitude ?: 0.0)
         }
 
+        var sliderPosition by remember {
+            mutableFloatStateOf(toVisitItemToEdit?.priority ?: 0.5f)
+        }
+
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
 
@@ -257,32 +263,39 @@ private fun AddNewToVisitItemForm(
                 label = { Text(text = "Enter description of place here.") }
             )
 
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = toVisitItemPriorityStr,
-                onValueChange = {
-                    toVisitItemPriorityStr = it
-                    validatePriority()
-                },
-                label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                trailingIcon = {
-                    if (priorityError) {
-                        Icon(
-                            Icons.Filled.Warning, "Error",
-                            tint = MaterialTheme.colorScheme.error)
-                    }
-                }
+            //very basic slider that displays position below
+            Slider(
+                value = sliderPosition,
+                onValueChange = { sliderPosition = it }
             )
+            Text(text = sliderPosition.toString())
 
-            if (priorityError) {
-                Text(
-                    text = "Please enter a valid priority (positive integer).",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
+//            OutlinedTextField(
+//                modifier = Modifier.fillMaxWidth(),
+//                value = toVisitItemPriorityStr,
+//                onValueChange = {
+//                    toVisitItemPriorityStr = it
+//                    validatePriority()
+//                },
+//                label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+//                trailingIcon = {
+//                    if (priorityError) {
+//                        Icon(
+//                            Icons.Filled.Warning, "Error",
+//                            tint = MaterialTheme.colorScheme.error)
+//                    }
+//                }
+//            )
+//
+//            if (priorityError) {
+//                Text(
+//                    text = "Please enter a valid priority (positive integer).",
+//                    color = MaterialTheme.colorScheme.error,
+//                    style = MaterialTheme.typography.labelSmall,
+//                    modifier = Modifier.padding(start = 16.dp)
+//                )
+//            }
 
             SpinnerSample(
                 listOf("Dining",
@@ -321,13 +334,8 @@ private fun AddNewToVisitItemForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    if (toVisitItemName == "" || toVisitItemPriorityStr == "" || priorityError) {
-                        if (toVisitItemName == "") {
-                            nameError = true
-                        }
-                        if (toVisitItemPriorityStr == "") {
-                            priorityError = true
-                        }
+                    if (toVisitItemName == "") {
+                        nameError = true
                     }
                     else if (toVisitItemToEdit == null) {
                         toVisitListViewModel.addToVisitItem(
@@ -335,7 +343,7 @@ private fun AddNewToVisitItemForm(
                                 0,
                                 toVisitItemName,
                                 toVisitItemDescription,
-                                toVisitItemPriorityStr.toInt(),
+                                sliderPosition,
                                 toVisitItemCategory,
                                 toVisitItemVisited,
                                 toVisitItemAddress,
@@ -348,7 +356,7 @@ private fun AddNewToVisitItemForm(
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
-                            priority = toVisitItemPriorityStr.toInt(),
+                            priority = sliderPosition,
                             category = toVisitItemCategory,
                             haveVisited = toVisitItemVisited,
                             address = toVisitItemAddress,

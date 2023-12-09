@@ -298,7 +298,9 @@ private fun AddLocationForm(
             mutableDoubleStateOf(position.longitude)
         }
 
-        var sliderPosition by remember { mutableFloatStateOf(0f) }
+        var sliderPosition by remember {
+            mutableFloatStateOf(toVisitItemToEdit?.priority ?: 0.5f)
+        }
 
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
@@ -368,7 +370,7 @@ private fun AddLocationForm(
                 label = { Text(text = "Description of location") }
             )
 
-            //very basic slider that displays positon below
+            //very basic slider that displays position below
             Slider(
                 value = sliderPosition,
                 onValueChange = { sliderPosition = it }
@@ -376,32 +378,32 @@ private fun AddLocationForm(
             Text(text = sliderPosition.toString())
 
 
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = toVisitItemPriorityStr,
-                onValueChange = {
-                    toVisitItemPriorityStr = it
-                    validatePriority()
-                },
-                label = { Text(text = "Priority of location") },//TODO: maybe turn into a spinner?
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                trailingIcon = {
-                    if (priorityError) {
-                        Icon(
-                            Icons.Filled.Warning, "Error",
-                            tint = MaterialTheme.colorScheme.error)
-                    }
-                }
-            )
-
-            if (priorityError) {
-                Text(
-                    text = "Please enter a valid priority (positive integer).",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
+//            OutlinedTextField(
+//                modifier = Modifier.fillMaxWidth(),
+//                value = toVisitItemPriorityStr,
+//                onValueChange = {
+//                    toVisitItemPriorityStr = it
+//                    validatePriority()
+//                },
+//                label = { Text(text = "Priority of location") },//TODO: maybe turn into a spinner?
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+//                trailingIcon = {
+//                    if (priorityError) {
+//                        Icon(
+//                            Icons.Filled.Warning, "Error",
+//                            tint = MaterialTheme.colorScheme.error)
+//                    }
+//                }
+//            )
+//
+//            if (priorityError) {
+//                Text(
+//                    text = "Please enter a valid priority (positive integer).",
+//                    color = MaterialTheme.colorScheme.error,
+//                    style = MaterialTheme.typography.labelSmall,
+//                    modifier = Modifier.padding(start = 16.dp)
+//                )
+//            }
 
             SpinnerSample(
                 listOf("Dining",
@@ -440,13 +442,8 @@ private fun AddLocationForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    if (toVisitItemName == "" || toVisitItemPriorityStr == "" || priorityError) {
-                        if (toVisitItemName == "") {
-                            nameError = true
-                        }
-                        if (toVisitItemPriorityStr == "") {
-                            priorityError = true
-                        }
+                    if (toVisitItemName == "") {
+                        nameError = true
                     }
                     else if (toVisitItemToEdit == null) {
                         toVisitListViewModel.addToVisitItem(
@@ -454,7 +451,7 @@ private fun AddLocationForm(
                                 0,
                                 toVisitItemName,
                                 toVisitItemDescription,
-                                toVisitItemPriorityStr.toInt(),
+                                sliderPosition,
                                 toVisitItemCategory,
                                 toVisitItemVisited,
                                 toVisitItemAddress,
@@ -467,7 +464,7 @@ private fun AddLocationForm(
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
-                            priority = toVisitItemPriorityStr.toInt(),
+                            priority = sliderPosition,
                             category = toVisitItemCategory,
                             haveVisited = toVisitItemVisited,
                             address = toVisitItemAddress,
