@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material3.Button
@@ -104,18 +106,10 @@ fun ToVisitListScreen(
                         Icon(Icons.Filled.Delete, null)
                     }
                     IconButton(onClick = {
-                        toVisitItemToEdit = null
-                        showAddToVisitDialog = true
+                        onNavigateToMap()
                     }) {
-                        Icon(Icons.Filled.AddCircle, null)
+                        Icon(Icons.Filled.ArrowBack, null)
                     }
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = ("to map"),
-                        modifier = Modifier.clickable {
-                            onNavigateToMap()
-                        }
-                    )
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer

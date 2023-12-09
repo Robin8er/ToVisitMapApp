@@ -187,7 +187,7 @@ fun MapScreen(
                 IconButton(onClick = {
                     onNavigateToToVisitList("")
                 }) {
-                    Icon(Icons.Filled.Info, null)
+                    Icon(Icons.Filled.Menu, null)
                 }
                 IconButton(onClick = {
                     showSearchDialog = true
@@ -517,7 +517,7 @@ private fun SearchToVisitListDialog(
                     searchName = it
                     nameError = searchName == ""
                 },
-                label = { Text(text = "Search for - leave empty") },
+                label = { Text(text = "Search for locations with:") },
                 trailingIcon = {
                     if (nameError) {
                     Icon(
