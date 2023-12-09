@@ -34,7 +34,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,6 +66,8 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import hu.ait.tovisitmapapp.data.ToVisitCategory
+import hu.ait.tovisitmapapp.data.ToVisitItem
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.Random
@@ -73,6 +77,7 @@ import androidx.compose.runtime.LaunchedEffect as LaunchedEffect1
 @Composable
 fun MapScreen(
     mapViewModel: MyMapViewModel = hiltViewModel(),
+    toVisitListViewModel: ToVisitListViewModel = hiltViewModel(),
     onNavigateToToVisitList: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -105,13 +110,21 @@ fun MapScreen(
         )
     }
 
-    var geocodeText by remember {
-        mutableStateOf("")
-    }
-
     var showSearchDialog by remember {
         mutableStateOf(false)
     }
+
+    var showAddLocationDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var currentPosition by remember {
+        mutableStateOf(LatLng(0.0, 0.0))
+    }
+
+    val latList by toVisitListViewModel.getAllLatitudes().collectAsState(emptyList())
+
+    val longList by toVisitListViewModel.getAllLongitudes().collectAsState(emptyList())
 
     Column {
         TopAppBar(
@@ -153,7 +166,7 @@ fun MapScreen(
             }
 
         } else {
-            Column() {
+            Column {
                 val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
                     "Please consider giving permission"
                 } else {
@@ -190,12 +203,12 @@ fun MapScreen(
             properties = mapProperties,
             uiSettings = uiSettings,
             onMapClick = {
-                mapViewModel.addMarkerPosition(it)
+                currentPosition = it
+                showAddLocationDialog = true
                 //add a dialogue here!!! and the info added creates a card on the other screen
 
                 val cameraPosition = CameraPosition.Builder()
                     .target(it)
-                    .zoom(5f)
                     .build()
 
                 coroutineScope.launch {
@@ -207,12 +220,236 @@ fun MapScreen(
         ) {
 
 
-            for (position in mapViewModel.getMarkersList()) {
+            for (i in (latList.indices)) {
+                val curLat = latList[i]
+                val curLong = longList[i]
+                var posLatLng = LatLng(curLat, curLong)
                 Marker(
-                    state = MarkerState(position = position),
+                    state = MarkerState(position = posLatLng),
                     title = "Name that the user gives location here",
                     snippet = "information that user gives..."
                 )
+            }
+        }
+
+        if (showAddLocationDialog) {
+            AddLocationForm(toVisitListViewModel,
+                {
+                    showAddLocationDialog = false
+//                    mapViewModel.addMarkerPosition(currentPosition)
+                },
+                currentPosition)
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun AddLocationForm(
+    toVisitListViewModel: ToVisitListViewModel,
+    onDialogDismiss: () -> Unit = {},
+    position: LatLng,
+    toVisitItemToEdit: ToVisitItem? = null
+) {
+    Dialog(
+        onDismissRequest = onDialogDismiss
+    ) {
+
+        var toVisitItemName by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.name ?: "")
+        }
+
+        var toVisitItemDescription by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.description ?: "")
+        }
+
+        var toVisitItemPriority by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.priority ?: "")
+        }
+
+        var toVisitItemCategory by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.category ?: ToVisitCategory.DINING)
+        }
+
+        var toVisitItemVisited by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.haveVisited ?: false
+            )
+        }
+
+        var toVisitItemAddress by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.address ?: "")
+        }
+
+        var toVisitItemLatitude by rememberSaveable {
+            mutableDoubleStateOf(position.latitude)
+        }
+
+        var toVisitItemLongitude by rememberSaveable {
+            mutableDoubleStateOf(position.longitude)
+        }
+
+        var nameError by rememberSaveable {mutableStateOf(false)}
+        var priorityError by rememberSaveable {mutableStateOf(false)}
+
+        var geocodeText = "Error"
+        val context = LocalContext.current
+        val geocoder = Geocoder(context, Locale.getDefault())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            geocodeText = geocoder.getFromLocation(
+                position.latitude,
+                position.longitude,
+                3)?.get(0)?.getAddressLine(0) ?: "Error"
+        }
+
+        toVisitItemAddress = geocodeText
+
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .background(
+                    MaterialTheme.colorScheme.secondaryContainer,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(10.dp)
+        ) {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = toVisitItemName,
+                onValueChange = {
+                    toVisitItemName = it
+                    nameError = toVisitItemName == ""
+                },
+                label = { Text(text = "Enter name of place to visit") },
+                trailingIcon = {
+                    if (nameError) {
+                        Icon(
+                            Icons.Filled.Warning, "Error",
+                            tint = MaterialTheme.colorScheme.error)
+                    }
+                }
+            )
+
+            if (nameError) {
+                Text(
+                    text = "Name cannot be empty.",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = toVisitItemDescription,
+                onValueChange = {
+                    toVisitItemDescription = it
+                },
+                label = { Text(text = "Enter description of place here.") }
+            )
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = toVisitItemPriority,
+                onValueChange = {
+                    toVisitItemPriority = it
+                },
+                label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                trailingIcon = {
+                    if (priorityError) {
+                        Icon(
+                            Icons.Filled.Warning, "Error",
+                            tint = MaterialTheme.colorScheme.error)
+                    }
+                }
+            )
+
+            if (priorityError) {
+                Text(
+                    text = "Priority cannot be empty.",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+
+            SpinnerSample(
+                listOf("Dining",
+                    "Study", "Entertainment", "Other"
+                ),
+                preselected =
+                when (toVisitItemCategory)
+                {
+                    ToVisitCategory.DINING -> "Dining"
+                    ToVisitCategory.STUDY -> "Study"
+                    ToVisitCategory.ENTERTAINMENT -> "Entertainment"
+                    else -> "Other"
+                },
+                onSelectionChanged = {
+                    toVisitItemCategory =
+                        when (it) {
+                            "Dining" -> ToVisitCategory.DINING
+                            "Study" -> ToVisitCategory.STUDY
+                            "Entertainment" -> ToVisitCategory.ENTERTAINMENT
+                            else -> ToVisitCategory.OTHER
+                        }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(checked = toVisitItemVisited, onCheckedChange = { toVisitItemVisited = it })
+                Text(text = "Visited")
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = {
+                    if (toVisitItemName == "" || toVisitItemPriority == "" || priorityError) {
+                        if (toVisitItemName == "") {
+                            nameError = true
+                        }
+                        if (toVisitItemPriority == "") {
+                            priorityError = true
+                        }
+                    }
+                    else if (toVisitItemToEdit == null) {
+                        toVisitListViewModel.addToVisitItem(
+                            ToVisitItem(
+                                0,
+                                toVisitItemName,
+                                toVisitItemDescription,
+                                toVisitItemPriority,
+                                toVisitItemCategory,
+                                toVisitItemVisited,
+                                toVisitItemAddress,
+                                toVisitItemLatitude,
+                                toVisitItemLongitude
+                            )
+                        )
+                        onDialogDismiss()
+                    } else {
+                        var toVisitItemEdited = toVisitItemToEdit.copy(
+                            name = toVisitItemName,
+                            description = toVisitItemDescription,
+                            priority = toVisitItemPriority,
+                            category = toVisitItemCategory,
+                            haveVisited = toVisitItemVisited,
+                            address = toVisitItemAddress,
+                            latitude = toVisitItemLatitude,
+                            longitude =toVisitItemLongitude
+                        )
+                        toVisitListViewModel.editToVisitItem(toVisitItemEdited)
+                        onDialogDismiss()
+                    }
+                }) {
+                    Text(text = "Save")
+                }
             }
         }
     }
@@ -285,13 +522,3 @@ private fun SearchToVisitListDialog(
         }
     }
 }
-//
-//fun getLocationText(location: Location?): String {
-//    return """
-//       Lat: ${location?.latitude}
-//       Lng: ${location?.longitude}
-//       Alt: ${location?.altitude}
-//       Speed: ${location?.speed}
-//       Accuracy: ${location?.accuracy}
-//    """.trimIndent()
-//}

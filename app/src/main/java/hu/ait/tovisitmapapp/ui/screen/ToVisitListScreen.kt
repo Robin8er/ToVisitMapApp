@@ -46,6 +46,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,6 +61,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
 import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
@@ -178,6 +180,18 @@ private fun AddNewToVisitItemForm(
         var toVisitItemVisited by rememberSaveable {
             mutableStateOf(toVisitItemToEdit?.haveVisited ?: false
             )
+        }
+
+        var toVisitItemAddress by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.address ?: "")
+        }
+
+        var toVisitItemLatitude by rememberSaveable {
+            mutableDoubleStateOf(toVisitItemToEdit?.latitude ?: 0.0)
+        }
+
+        var toVisitItemLongitude by rememberSaveable {
+            mutableDoubleStateOf(toVisitItemToEdit?.longitude ?: 0.0)
         }
 
         var nameError by rememberSaveable {mutableStateOf(false)}
@@ -306,7 +320,10 @@ private fun AddNewToVisitItemForm(
                                 toVisitItemDescription,
                                 toVisitItemPriority,
                                 toVisitItemCategory,
-                                toVisitItemVisited
+                                toVisitItemVisited,
+                                toVisitItemAddress,
+                                toVisitItemLatitude,
+                                toVisitItemLongitude
                             )
                         )
                         onDialogDismiss()
@@ -316,7 +333,10 @@ private fun AddNewToVisitItemForm(
                             description = toVisitItemDescription,
                             priority = toVisitItemPriority,
                             category = toVisitItemCategory,
-                            haveVisited = toVisitItemVisited
+                            haveVisited = toVisitItemVisited,
+                            address = toVisitItemAddress,
+                            latitude = toVisitItemLatitude,
+                            longitude = toVisitItemLongitude
                         )
                         toVisitListViewModel.editToVisitItem(toVisitItemEdited)
                         onDialogDismiss()
@@ -410,6 +430,18 @@ fun ToVisitItemCard(
             if (expanded) {
                 Text(
                     text = toVisitItem.description,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                    )
+                )
+                Text(
+                    text = "Address: ${toVisitItem.address}",
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                    )
+                )
+                Text(
+                    text = "Co-ords: ${toVisitItem.latitude}, ${toVisitItem.longitude}",
                     style = TextStyle(
                         fontSize = 12.sp,
                     )

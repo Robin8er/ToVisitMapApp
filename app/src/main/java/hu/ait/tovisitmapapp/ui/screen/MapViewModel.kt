@@ -16,19 +16,6 @@ class MyMapViewModel @Inject constructor(
     val locationManager: LocationManager
 ) : ViewModel() {
 
-    // --- Maps related
-    private var _markerPositionList =
-        mutableStateListOf<LatLng>()
-
-    fun getMarkersList(): List<LatLng> {
-        return _markerPositionList
-    }
-
-    fun addMarkerPosition(latLng: LatLng) {
-        _markerPositionList.add(latLng)
-
-    }
-
     // --- location related functions!
     var locationState = mutableStateOf<Location?>(null)
 
