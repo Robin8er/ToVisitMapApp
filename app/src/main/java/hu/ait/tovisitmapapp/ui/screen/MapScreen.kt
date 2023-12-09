@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -296,6 +298,8 @@ private fun AddLocationForm(
             mutableDoubleStateOf(position.longitude)
         }
 
+        var sliderPosition by remember { mutableFloatStateOf(0f) }
+
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
 
@@ -336,7 +340,7 @@ private fun AddLocationForm(
                     toVisitItemName = it
                     nameError = toVisitItemName == ""
                 },
-                label = { Text(text = "Enter name of place to visit") },
+                label = { Text(text = "Name of this location") },
                 trailingIcon = {
                     if (nameError) {
                         Icon(
@@ -361,8 +365,16 @@ private fun AddLocationForm(
                 onValueChange = {
                     toVisitItemDescription = it
                 },
-                label = { Text(text = "Enter description of place here.") }
+                label = { Text(text = "Description of location") }
             )
+
+            //very basic slider that displays positon below
+            Slider(
+                value = sliderPosition,
+                onValueChange = { sliderPosition = it }
+            )
+            Text(text = sliderPosition.toString())
+
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -371,7 +383,7 @@ private fun AddLocationForm(
                     toVisitItemPriorityStr = it
                     validatePriority()
                 },
-                label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
+                label = { Text(text = "Priority of location") },//TODO: maybe turn into a spinner?
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 trailingIcon = {
                     if (priorityError) {

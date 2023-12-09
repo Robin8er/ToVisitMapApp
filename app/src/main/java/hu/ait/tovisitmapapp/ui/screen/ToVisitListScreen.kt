@@ -65,6 +65,10 @@ import com.google.android.gms.maps.model.LatLng
 import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
+//import com.wajahatkarim.flippable.FlipAnimationType
+//import com.wajahatkarim.flippable.Flippable
+//import com.wajahatkarim.flippable.FlippableController
+//import com.wajahatkarim.flippable_demo.ui.theme.FlippableDemoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,6 +134,7 @@ fun ToVisitListScreen(
             if (toVisitList.isEmpty()) {
                 Text(text = "No Items")
             } else {
+
                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
                     items(toVisitList) {
                         ToVisitItemCard(toVisitItem = it,
@@ -149,6 +154,8 @@ fun ToVisitListScreen(
         }
     }
 }
+
+
 
 
 @Composable
