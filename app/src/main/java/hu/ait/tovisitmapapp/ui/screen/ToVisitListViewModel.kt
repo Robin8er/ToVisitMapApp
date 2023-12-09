@@ -2,6 +2,7 @@ package hu.ait.tovisitmapapp.ui.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.ait.tovisitmapapp.data.ToVisitItem
 import hu.ait.tovisitmapapp.data.ToVisitListDAO
@@ -23,17 +24,13 @@ class ToVisitListViewModel @Inject constructor(
         return toVisitListDAO.getToVisitItemsLike(name)
     }
 
-//    suspend fun getFoodItemsNum(): Int {
-//        return toVisitListDAO.getFoodItemsNum()
-//    }
-//
-//    suspend fun getElectronicsItemsNum(): Int {
-//        return toVisitListDAO.getElectronicsItemsNum()
-//    }
-//
-//    suspend fun getBookItemsNum(): Int {
-//        return toVisitListDAO.getBookItemsNum()
-//    }
+    fun getAllLatitudes(): Flow<List<Double>> {
+        return toVisitListDAO.getAllLatitudes()
+    }
+
+    fun getAllLongitudes(): Flow<List<Double>> {
+        return toVisitListDAO.getAllLongitudes()
+    }
 
     fun addToVisitItem(toVisitItem: ToVisitItem) {
         viewModelScope.launch {

@@ -3,6 +3,7 @@ package hu.ait.tovisitmapapp.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
 import hu.ait.tovisitmapapp.R
 import java.io.Serializable
 
@@ -11,9 +12,12 @@ data class ToVisitItem(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "name") var name: String,
     @ColumnInfo(name = "description") var description: String,
-    @ColumnInfo(name = "priority") var priority: String, //TODO: maybe make an int / double / float
+    @ColumnInfo(name = "priority") var priority: Int,
     @ColumnInfo(name = "category") var category: ToVisitCategory,
-    @ColumnInfo(name = "havevisited") var haveVisited: Boolean
+    @ColumnInfo(name = "havevisited") var haveVisited: Boolean,
+    @ColumnInfo(name = "address") var address: String,
+    @ColumnInfo(name = "latitude") var latitude: Double,
+    @ColumnInfo(name = "longitude") var longitude: Double
 ) : Serializable
 
 enum class ToVisitCategory {

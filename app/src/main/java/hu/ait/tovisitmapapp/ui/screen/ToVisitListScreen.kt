@@ -46,6 +46,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,6 +61,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
 import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
@@ -174,8 +176,8 @@ private fun AddNewToVisitItemForm(
             mutableStateOf(toVisitItemToEdit?.description ?: "")
         }
 
-        var toVisitItemPriority by rememberSaveable {
-            mutableStateOf(toVisitItemToEdit?.priority ?: "")
+        var toVisitItemPriorityStr by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.priority.toString())
         }
 
         var toVisitItemCategory by rememberSaveable {
@@ -187,8 +189,29 @@ private fun AddNewToVisitItemForm(
             )
         }
 
+        var toVisitItemAddress by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.address ?: "")
+        }
+
+        var toVisitItemLatitude by rememberSaveable {
+            mutableDoubleStateOf(toVisitItemToEdit?.latitude ?: 0.0)
+        }
+
+        var toVisitItemLongitude by rememberSaveable {
+            mutableDoubleStateOf(toVisitItemToEdit?.longitude ?: 0.0)
+        }
+
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
+
+        fun validatePriority() {
+            priorityError = try {
+                val priorityInt = toVisitItemPriorityStr.toInt()
+                priorityInt < 0
+            } catch (e: Exception) {
+                true
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -236,9 +259,10 @@ private fun AddNewToVisitItemForm(
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = toVisitItemPriority,
+                value = toVisitItemPriorityStr,
                 onValueChange = {
-                    toVisitItemPriority = it
+                    toVisitItemPriorityStr = it
+                    validatePriority()
                 },
                 label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -253,7 +277,7 @@ private fun AddNewToVisitItemForm(
 
             if (priorityError) {
                 Text(
-                    text = "Priority cannot be empty.",
+                    text = "Please enter a valid priority (positive integer).",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -297,11 +321,11 @@ private fun AddNewToVisitItemForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    if (toVisitItemName == "" || toVisitItemPriority == "" || priorityError) {
+                    if (toVisitItemName == "" || toVisitItemPriorityStr == "" || priorityError) {
                         if (toVisitItemName == "") {
                             nameError = true
                         }
-                        if (toVisitItemPriority == "") {
+                        if (toVisitItemPriorityStr == "") {
                             priorityError = true
                         }
                     }
@@ -311,9 +335,12 @@ private fun AddNewToVisitItemForm(
                                 0,
                                 toVisitItemName,
                                 toVisitItemDescription,
-                                toVisitItemPriority,
+                                toVisitItemPriorityStr.toInt(),
                                 toVisitItemCategory,
-                                toVisitItemVisited
+                                toVisitItemVisited,
+                                toVisitItemAddress,
+                                toVisitItemLatitude,
+                                toVisitItemLongitude
                             )
                         )
                         onDialogDismiss()
@@ -321,9 +348,12 @@ private fun AddNewToVisitItemForm(
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
-                            priority = toVisitItemPriority,
+                            priority = toVisitItemPriorityStr.toInt(),
                             category = toVisitItemCategory,
-                            haveVisited = toVisitItemVisited
+                            haveVisited = toVisitItemVisited,
+                            address = toVisitItemAddress,
+                            latitude = toVisitItemLatitude,
+                            longitude = toVisitItemLongitude
                         )
                         toVisitListViewModel.editToVisitItem(toVisitItemEdited)
                         onDialogDismiss()
@@ -375,7 +405,7 @@ fun ToVisitItemCard(
                 )
                 Column {
                     Text(toVisitItem.name, modifier = Modifier.fillMaxWidth(0.4f))
-                    Text(toVisitItem.priority, modifier = Modifier.fillMaxWidth(0.4f))
+                    Text("Priority: ${toVisitItem.priority}", modifier = Modifier.fillMaxWidth(0.4f))
                 }
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Checkbox(
@@ -417,6 +447,18 @@ fun ToVisitItemCard(
             if (expanded) {
                 Text(
                     text = toVisitItem.description,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                    )
+                )
+                Text(
+                    text = "Address: ${toVisitItem.address}",
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                    )
+                )
+                Text(
+                    text = "Co-ords: ${toVisitItem.latitude}, ${toVisitItem.longitude}",
                     style = TextStyle(
                         fontSize = 12.sp,
                     )
