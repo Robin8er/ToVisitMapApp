@@ -124,9 +124,7 @@ fun MapScreen(
         else LatLng(0.0, 0.0))
     }
 
-    val latList by toVisitListViewModel.getAllLatitudes().collectAsState(emptyList())
-
-    val longList by toVisitListViewModel.getAllLongitudes().collectAsState(emptyList())
+    val locationsList by toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
 
     Column {
 
@@ -148,48 +146,23 @@ fun MapScreen(
                     )
                 })
 
-//                val fineLocationPermissionState = rememberPermissionState(
-//                    Manifest.permission.ACCESS_FINE_LOCATION
-//                )
-//                if (fineLocationPermissionState.status.isGranted) {
-//                    Column {
-//                        IconButton(onClick = {
-//                            mapViewModel.startLocationMonitoring()
-//                        }) {
-//                            Icon(Icons.Filled.LocationOn, null)
-//                        }
-////                        Button(onClick = {
-////                            mapViewModel.startLocationMonitoring()
-////                        }) {
-////                            Text(text = "Start location monitoring")
-////                        }
-////                        Text(
-////                            text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
-////                                    "${mapViewModel.locationState.value?.longitude}"
-////                        )
-//                    }
-//
-//                } else {
-//                    Column {
-//                        val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
-//                            "Please consider giving permission"
-//                        } else {
-//                            "Give permission for location"
-//                        }
-//                        Text(text = permissionText)
-//                        Button(onClick = {
-//                            fineLocationPermissionState.launchPermissionRequest()
-//                        }) {
-//                            Text(text = "Request permission")
-//                        }
-//                    }
-//                }
-
+                val fineLocationPermissionState = rememberPermissionState(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                IconButton(onClick = {
+                    if (fineLocationPermissionState.status.isGranted) {
+                        mapViewModel.startLocationMonitoring()
+                    } else {
+                        fineLocationPermissionState.launchPermissionRequest()
+                    }
+                }) {
+                    Icon(Icons.Filled.LocationOn, null)
+                }
 
                 IconButton(onClick = {
                     onNavigateToToVisitList("")
                 }) {
-                    Icon(Icons.Filled.Info, null)
+                    Icon(Icons.Filled.Menu, null)
                 }
                 IconButton(onClick = {
                     showSearchDialog = true
@@ -274,14 +247,12 @@ fun MapScreen(
         ) {
 
 
-            for (i in (latList.indices)) {
-                val curLat = latList[i]
-                val curLong = longList[i]
-                var posLatLng = LatLng(curLat, curLong)
+            for (location in locationsList) {
+                var posLatLng = LatLng(location.latitude, location.longitude)
                 Marker(
                     state = MarkerState(position = posLatLng),
-                    title = "Name that the user gives location here",
-                    snippet = "information that user gives..."
+                    title = location.name,
+                    snippet = location.description
                 )
             }
         }
@@ -290,7 +261,6 @@ fun MapScreen(
             AddLocationForm(toVisitListViewModel,
                 {
                     showAddLocationDialog = false
-//                    mapViewModel.addMarkerPosition(currentPosition)
                 },
                 currentPosition)
         }
@@ -522,7 +492,7 @@ private fun SearchToVisitListDialog(
                     searchName = it
                     nameError = searchName == ""
                 },
-                label = { Text(text = "Search for - leave empty") },
+                label = { Text(text = "Search for locations with:") },
                 trailingIcon = {
                     if (nameError) {
                     Icon(
