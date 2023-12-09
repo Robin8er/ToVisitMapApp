@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import hu.ait.tovisitmapapp.ui.screen.MapScreen
+import hu.ait.tovisitmapapp.ui.screen.OpeningScreen
 import hu.ait.tovisitmapapp.ui.screen.ToVisitListScreen
 import hu.ait.tovisitmapapp.ui.theme.ToVisitMapAppTheme
 
@@ -44,11 +45,17 @@ class MainActivity : ComponentActivity() {
 fun ToVisitMapAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "map"
+    startDestination: String = "openingscreen"
 ) {
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
+        composable("openingscreen"){ OpeningScreen(
+            onNavigateToMap = {
+                navController.navigate("map")
+            }
+
+        )}
         composable("tovisitlist") {
             ToVisitListScreen(
                 onNavigateToMap = {

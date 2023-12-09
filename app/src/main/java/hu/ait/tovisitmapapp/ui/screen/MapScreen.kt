@@ -148,42 +148,42 @@ fun MapScreen(
                     )
                 })
 
-                val fineLocationPermissionState = rememberPermissionState(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                if (fineLocationPermissionState.status.isGranted) {
-                    Column {
-                        IconButton(onClick = {
-                            mapViewModel.startLocationMonitoring()
-                        }) {
-                            Icon(Icons.Filled.LocationOn, null)
-                        }
-//                        Button(onClick = {
+//                val fineLocationPermissionState = rememberPermissionState(
+//                    Manifest.permission.ACCESS_FINE_LOCATION
+//                )
+//                if (fineLocationPermissionState.status.isGranted) {
+//                    Column {
+//                        IconButton(onClick = {
 //                            mapViewModel.startLocationMonitoring()
 //                        }) {
-//                            Text(text = "Start location monitoring")
+//                            Icon(Icons.Filled.LocationOn, null)
 //                        }
-//                        Text(
-//                            text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
-//                                    "${mapViewModel.locationState.value?.longitude}"
-//                        )
-                    }
-
-                } else {
-                    Column {
-                        val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
-                            "Please consider giving permission"
-                        } else {
-                            "Give permission for location"
-                        }
-                        Text(text = permissionText)
-                        Button(onClick = {
-                            fineLocationPermissionState.launchPermissionRequest()
-                        }) {
-                            Text(text = "Request permission")
-                        }
-                    }
-                }
+////                        Button(onClick = {
+////                            mapViewModel.startLocationMonitoring()
+////                        }) {
+////                            Text(text = "Start location monitoring")
+////                        }
+////                        Text(
+////                            text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
+////                                    "${mapViewModel.locationState.value?.longitude}"
+////                        )
+//                    }
+//
+//                } else {
+//                    Column {
+//                        val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
+//                            "Please consider giving permission"
+//                        } else {
+//                            "Give permission for location"
+//                        }
+//                        Text(text = permissionText)
+//                        Button(onClick = {
+//                            fineLocationPermissionState.launchPermissionRequest()
+//                        }) {
+//                            Text(text = "Request permission")
+//                        }
+//                    }
+//                }
 
 
                 IconButton(onClick = {
