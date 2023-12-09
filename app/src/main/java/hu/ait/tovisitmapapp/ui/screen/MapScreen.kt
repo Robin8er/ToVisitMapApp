@@ -333,9 +333,9 @@ private fun AddLocationForm(
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.padding(10.dp)) {
-                Text(text = "?")
-                Text(text = "!")
-                Text(text = "!!")
+                Text(text = "❓")
+                Text(text = "❗")
+                Text(text = "‼️")
             }
             Text(text = toVisitItemPriority.toString())
 
