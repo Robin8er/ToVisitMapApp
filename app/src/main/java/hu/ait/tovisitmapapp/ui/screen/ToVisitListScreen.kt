@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Build
@@ -57,14 +56,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.maps.model.LatLng
-import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
 //import com.wajahatkarim.flippable.FlipAnimationType
@@ -178,10 +173,6 @@ private fun AddNewToVisitItemForm(
             mutableStateOf(toVisitItemToEdit?.description ?: "")
         }
 
-        var toVisitItemPriorityStr by rememberSaveable {
-            mutableStateOf(toVisitItemToEdit?.priority.toString())
-        }
-
         var toVisitItemCategory by rememberSaveable {
             mutableStateOf(toVisitItemToEdit?.category ?: ToVisitCategory.DINING)
         }
@@ -203,21 +194,11 @@ private fun AddNewToVisitItemForm(
             mutableDoubleStateOf(toVisitItemToEdit?.longitude ?: 0.0)
         }
 
-        var sliderPosition by remember {
+        var toVisitItemPriority by remember {
             mutableFloatStateOf(toVisitItemToEdit?.priority ?: 0.5f)
         }
 
         var nameError by rememberSaveable {mutableStateOf(false)}
-        var priorityError by rememberSaveable {mutableStateOf(false)}
-
-        fun validatePriority() {
-            priorityError = try {
-                val priorityInt = toVisitItemPriorityStr.toInt()
-                priorityInt < 0
-            } catch (e: Exception) {
-                true
-            }
-        }
 
         Column(
             modifier = Modifier
@@ -265,37 +246,10 @@ private fun AddNewToVisitItemForm(
 
             //very basic slider that displays position below
             Slider(
-                value = sliderPosition,
-                onValueChange = { sliderPosition = it }
+                value = toVisitItemPriority,
+                onValueChange = { toVisitItemPriority = it }
             )
-            Text(text = sliderPosition.toString())
-
-//            OutlinedTextField(
-//                modifier = Modifier.fillMaxWidth(),
-//                value = toVisitItemPriorityStr,
-//                onValueChange = {
-//                    toVisitItemPriorityStr = it
-//                    validatePriority()
-//                },
-//                label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-//                trailingIcon = {
-//                    if (priorityError) {
-//                        Icon(
-//                            Icons.Filled.Warning, "Error",
-//                            tint = MaterialTheme.colorScheme.error)
-//                    }
-//                }
-//            )
-//
-//            if (priorityError) {
-//                Text(
-//                    text = "Please enter a valid priority (positive integer).",
-//                    color = MaterialTheme.colorScheme.error,
-//                    style = MaterialTheme.typography.labelSmall,
-//                    modifier = Modifier.padding(start = 16.dp)
-//                )
-//            }
+            Text(text = toVisitItemPriority.toString())
 
             SpinnerSample(
                 listOf("Dining",
@@ -343,7 +297,7 @@ private fun AddNewToVisitItemForm(
                                 0,
                                 toVisitItemName,
                                 toVisitItemDescription,
-                                sliderPosition,
+                                toVisitItemPriority,
                                 toVisitItemCategory,
                                 toVisitItemVisited,
                                 toVisitItemAddress,
@@ -356,7 +310,7 @@ private fun AddNewToVisitItemForm(
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
-                            priority = sliderPosition,
+                            priority = toVisitItemPriority,
                             category = toVisitItemCategory,
                             haveVisited = toVisitItemVisited,
                             address = toVisitItemAddress,
