@@ -12,7 +12,7 @@ data class ToVisitItem(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "name") var name: String,
     @ColumnInfo(name = "description") var description: String,
-    @ColumnInfo(name = "priority") var priority: String, //TODO: maybe make an int / double / float
+    @ColumnInfo(name = "priority") var priority: Int,
     @ColumnInfo(name = "category") var category: ToVisitCategory,
     @ColumnInfo(name = "havevisited") var haveVisited: Boolean,
     @ColumnInfo(name = "address") var address: String,

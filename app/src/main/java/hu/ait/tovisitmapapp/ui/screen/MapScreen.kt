@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -191,8 +192,6 @@ fun MapScreen(
             )
         })
 
-        //Text(text = geocodeText)
-
         if (showSearchDialog) {
             SearchToVisitListDialog({ showSearchDialog = false }, onNavigateToToVisitList)
         }
@@ -205,9 +204,7 @@ fun MapScreen(
             onMapClick = {
                 currentPosition = it
                 showAddLocationDialog = true
-                //add a dialogue here!!! and the info added creates a card on the other screen
-
-                val cameraPosition = CameraPosition.Builder()
+                val cameraPosition = CameraPosition.Builder() // TODO: don't let it zoom out
                     .target(it)
                     .build()
 
@@ -263,8 +260,8 @@ private fun AddLocationForm(
             mutableStateOf(toVisitItemToEdit?.description ?: "")
         }
 
-        var toVisitItemPriority by rememberSaveable {
-            mutableStateOf(toVisitItemToEdit?.priority ?: "")
+        var toVisitItemPriorityStr by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.priority?.toString()?: "")
         }
 
         var toVisitItemCategory by rememberSaveable {
@@ -290,6 +287,15 @@ private fun AddLocationForm(
 
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
+
+        fun validatePriority() {
+            priorityError = try {
+                val priorityInt = toVisitItemPriorityStr.toInt()
+                priorityInt < 0
+            } catch (e: Exception) {
+                true
+            }
+        }
 
         var geocodeText = "Error"
         val context = LocalContext.current
@@ -349,9 +355,10 @@ private fun AddLocationForm(
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = toVisitItemPriority,
+                value = toVisitItemPriorityStr,
                 onValueChange = {
-                    toVisitItemPriority = it
+                    toVisitItemPriorityStr = it
+                    validatePriority()
                 },
                 label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -366,7 +373,7 @@ private fun AddLocationForm(
 
             if (priorityError) {
                 Text(
-                    text = "Priority cannot be empty.",
+                    text = "Please enter a valid priority (positive integer).",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -410,11 +417,11 @@ private fun AddLocationForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    if (toVisitItemName == "" || toVisitItemPriority == "" || priorityError) {
+                    if (toVisitItemName == "" || toVisitItemPriorityStr == "" || priorityError) {
                         if (toVisitItemName == "") {
                             nameError = true
                         }
-                        if (toVisitItemPriority == "") {
+                        if (toVisitItemPriorityStr == "") {
                             priorityError = true
                         }
                     }
@@ -424,7 +431,7 @@ private fun AddLocationForm(
                                 0,
                                 toVisitItemName,
                                 toVisitItemDescription,
-                                toVisitItemPriority,
+                                toVisitItemPriorityStr.toInt(),
                                 toVisitItemCategory,
                                 toVisitItemVisited,
                                 toVisitItemAddress,
@@ -437,7 +444,7 @@ private fun AddLocationForm(
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
-                            priority = toVisitItemPriority,
+                            priority = toVisitItemPriorityStr.toInt(),
                             category = toVisitItemCategory,
                             haveVisited = toVisitItemVisited,
                             address = toVisitItemAddress,

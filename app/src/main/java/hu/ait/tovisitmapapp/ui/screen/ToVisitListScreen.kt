@@ -169,8 +169,8 @@ private fun AddNewToVisitItemForm(
             mutableStateOf(toVisitItemToEdit?.description ?: "")
         }
 
-        var toVisitItemPriority by rememberSaveable {
-            mutableStateOf(toVisitItemToEdit?.priority ?: "")
+        var toVisitItemPriorityStr by rememberSaveable {
+            mutableStateOf(toVisitItemToEdit?.priority.toString())
         }
 
         var toVisitItemCategory by rememberSaveable {
@@ -196,6 +196,15 @@ private fun AddNewToVisitItemForm(
 
         var nameError by rememberSaveable {mutableStateOf(false)}
         var priorityError by rememberSaveable {mutableStateOf(false)}
+
+        fun validatePriority() {
+            priorityError = try {
+                val priorityInt = toVisitItemPriorityStr.toInt()
+                priorityInt < 0
+            } catch (e: Exception) {
+                true
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -243,9 +252,10 @@ private fun AddNewToVisitItemForm(
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = toVisitItemPriority,
+                value = toVisitItemPriorityStr,
                 onValueChange = {
-                    toVisitItemPriority = it
+                    toVisitItemPriorityStr = it
+                    validatePriority()
                 },
                 label = { Text(text = "Enter priority of place here") },//TODO: maybe turn into a spinner?
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -260,7 +270,7 @@ private fun AddNewToVisitItemForm(
 
             if (priorityError) {
                 Text(
-                    text = "Priority cannot be empty.",
+                    text = "Please enter a valid priority (positive integer).",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -304,11 +314,11 @@ private fun AddNewToVisitItemForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    if (toVisitItemName == "" || toVisitItemPriority == "" || priorityError) {
+                    if (toVisitItemName == "" || toVisitItemPriorityStr == "" || priorityError) {
                         if (toVisitItemName == "") {
                             nameError = true
                         }
-                        if (toVisitItemPriority == "") {
+                        if (toVisitItemPriorityStr == "") {
                             priorityError = true
                         }
                     }
@@ -318,7 +328,7 @@ private fun AddNewToVisitItemForm(
                                 0,
                                 toVisitItemName,
                                 toVisitItemDescription,
-                                toVisitItemPriority,
+                                toVisitItemPriorityStr.toInt(),
                                 toVisitItemCategory,
                                 toVisitItemVisited,
                                 toVisitItemAddress,
@@ -331,7 +341,7 @@ private fun AddNewToVisitItemForm(
                         var toVisitItemEdited = toVisitItemToEdit.copy(
                             name = toVisitItemName,
                             description = toVisitItemDescription,
-                            priority = toVisitItemPriority,
+                            priority = toVisitItemPriorityStr.toInt(),
                             category = toVisitItemCategory,
                             haveVisited = toVisitItemVisited,
                             address = toVisitItemAddress,
@@ -388,7 +398,7 @@ fun ToVisitItemCard(
                 )
                 Column {
                     Text(toVisitItem.name, modifier = Modifier.fillMaxWidth(0.4f))
-                    Text(toVisitItem.priority, modifier = Modifier.fillMaxWidth(0.4f))
+                    Text("Priority: ${toVisitItem.priority}", modifier = Modifier.fillMaxWidth(0.4f))
                 }
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Checkbox(
