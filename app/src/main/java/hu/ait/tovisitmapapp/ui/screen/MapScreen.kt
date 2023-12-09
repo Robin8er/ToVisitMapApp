@@ -149,40 +149,15 @@ fun MapScreen(
                 val fineLocationPermissionState = rememberPermissionState(
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
-                if (fineLocationPermissionState.status.isGranted) {
-                    Column {
-                        IconButton(onClick = {
-                            mapViewModel.startLocationMonitoring()
-                        }) {
-                            Icon(Icons.Filled.LocationOn, null)
-                        }
-//                        Button(onClick = {
-//                            mapViewModel.startLocationMonitoring()
-//                        }) {
-//                            Text(text = "Start location monitoring")
-//                        }
-//                        Text(
-//                            text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
-//                                    "${mapViewModel.locationState.value?.longitude}"
-//                        )
+                IconButton(onClick = {
+                    if (fineLocationPermissionState.status.isGranted) {
+                        mapViewModel.startLocationMonitoring()
+                    } else {
+                        fineLocationPermissionState.launchPermissionRequest()
                     }
-
-                } else {
-                    Column {
-                        val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
-                            "Please consider giving permission"
-                        } else {
-                            "Give permission for location"
-                        }
-                        Text(text = permissionText)
-                        Button(onClick = {
-                            fineLocationPermissionState.launchPermissionRequest()
-                        }) {
-                            Text(text = "Request permission")
-                        }
-                    }
+                }) {
+                    Icon(Icons.Filled.LocationOn, null)
                 }
-
 
                 IconButton(onClick = {
                     onNavigateToToVisitList("")
