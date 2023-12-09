@@ -238,11 +238,16 @@ private fun AddNewToVisitItemForm(
                 label = { Text(text = "Enter description of place here.") }
             )
 
-            //very basic slider that displays position below
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
             )
+            Row(horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(10.dp)) {
+                Text(text = "?")
+                Text(text = "!")
+                Text(text = "!!")
+            }
             Text(text = toVisitItemPriority.toString())
 
             SpinnerSample(
