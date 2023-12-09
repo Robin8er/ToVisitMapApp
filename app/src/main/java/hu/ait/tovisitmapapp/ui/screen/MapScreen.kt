@@ -206,6 +206,7 @@ fun MapScreen(
                 showAddLocationDialog = true
                 val cameraPosition = CameraPosition.Builder() // TODO: don't let it zoom out
                     .target(it)
+                    .zoom(17.5f)
                     .build()
 
                 coroutineScope.launch {
