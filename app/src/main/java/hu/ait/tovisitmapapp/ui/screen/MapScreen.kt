@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -21,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -40,6 +43,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -121,11 +127,63 @@ fun MapScreen(
     val locationsList by toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
 
     Column {
+
+
         TopAppBar(
             title = {
                 Text("To Visit List")
             },
+
             actions = {
+
+                var isSatellite by remember {
+                    mutableStateOf(false)
+                }
+                Switch(checked = isSatellite, onCheckedChange = {
+                    isSatellite = it
+                    mapProperties = mapProperties.copy(
+                        mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL
+                    )
+                })
+
+                val fineLocationPermissionState = rememberPermissionState(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                if (fineLocationPermissionState.status.isGranted) {
+                    Column {
+                        IconButton(onClick = {
+                            mapViewModel.startLocationMonitoring()
+                        }) {
+                            Icon(Icons.Filled.LocationOn, null)
+                        }
+//                        Button(onClick = {
+//                            mapViewModel.startLocationMonitoring()
+//                        }) {
+//                            Text(text = "Start location monitoring")
+//                        }
+//                        Text(
+//                            text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
+//                                    "${mapViewModel.locationState.value?.longitude}"
+//                        )
+                    }
+
+                } else {
+                    Column {
+                        val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
+                            "Please consider giving permission"
+                        } else {
+                            "Give permission for location"
+                        }
+                        Text(text = permissionText)
+                        Button(onClick = {
+                            fineLocationPermissionState.launchPermissionRequest()
+                        }) {
+                            Text(text = "Request permission")
+                        }
+                    }
+                }
+
+
                 IconButton(onClick = {
                     onNavigateToToVisitList("")
                 }) {
@@ -142,49 +200,51 @@ fun MapScreen(
             )
         )
 
+        //old topappbar is above
 
-        val fineLocationPermissionState = rememberPermissionState(
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        if (fineLocationPermissionState.status.isGranted) {
-            Column {
-
-                Button(onClick = {
-                    mapViewModel.startLocationMonitoring()
-                }) {
-                    Text(text = "Start location monitoring")
-                }
-                Text(
-                    text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
-                            "${mapViewModel.locationState.value?.longitude}"
-                )
-            }
-
-        } else {
-            Column {
-                val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
-                    "Please consider giving permission"
-                } else {
-                    "Give permission for location"
-                }
-                Text(text = permissionText)
-                Button(onClick = {
-                    fineLocationPermissionState.launchPermissionRequest()
-                }) {
-                    Text(text = "Request permission")
-                }
-            }
-        }
-
-        var isSatellite by remember {
-            mutableStateOf(false)
-        }
-        Switch(checked = isSatellite, onCheckedChange = {
-            isSatellite = it
-            mapProperties = mapProperties.copy(
-                mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL
-            )
-        })
+//
+//        val fineLocationPermissionState = rememberPermissionState(
+//            Manifest.permission.ACCESS_FINE_LOCATION
+//        )
+//        if (fineLocationPermissionState.status.isGranted) {
+//            Column {
+//
+//                Button(onClick = {
+//                    mapViewModel.startLocationMonitoring()
+//                }) {
+//                    Text(text = "Start location monitoring")
+//                }
+//                Text(
+//                    text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
+//                            "${mapViewModel.locationState.value?.longitude}"
+//                )
+//            }
+//
+//        } else {
+//            Column {
+//                val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
+//                    "Please consider giving permission"
+//                } else {
+//                    "Give permission for location"
+//                }
+//                Text(text = permissionText)
+//                Button(onClick = {
+//                    fineLocationPermissionState.launchPermissionRequest()
+//                }) {
+//                    Text(text = "Request permission")
+//                }
+//            }
+//        }
+//
+//        var isSatellite by remember {
+//            mutableStateOf(false)
+//        }
+//        Switch(checked = isSatellite, onCheckedChange = {
+//            isSatellite = it
+//            mapProperties = mapProperties.copy(
+//                mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL
+//            )
+//        })
 
         if (showSearchDialog) {
             SearchToVisitListDialog({ showSearchDialog = false }, onNavigateToToVisitList)
