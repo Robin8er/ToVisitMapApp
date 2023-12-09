@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -330,18 +332,21 @@ private fun AddLocationForm(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority:")
+            Text(text = "Priority: ${toVisitItemPriority.toString()}")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(10.dp)) {
-                Text(text = "❓")
-                Text(text = "❗")
-                Text(text = "‼️")
+                modifier = Modifier.fillMaxWidth()) {
+                Text(text = "🧍",
+                    fontSize = 30.sp)
+                Text(text = "🚶",
+                    fontSize = 30.sp)
+                Text(text = "🏃",
+                    fontSize = 30.sp)
             }
-            Text(text = toVisitItemPriority.toString())
+
 
             SpinnerSample(
                 listOf("Dining",
