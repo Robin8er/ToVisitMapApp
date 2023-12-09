@@ -47,6 +47,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -60,6 +61,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -125,6 +127,13 @@ fun MapScreen(
         mutableStateOf(LatLng(0.0, 0.0))
     }
 
+    var currentLocation by remember {
+        mutableStateOf(if (mapViewModel.locationState.value != null)
+            LatLng(mapViewModel.locationState.value!!.latitude,
+                mapViewModel.locationState.value!!.longitude)
+        else LatLng(0.0, 0.0))
+    }
+
     val latList by toVisitListViewModel.getAllLatitudes().collectAsState(emptyList())
 
     val longList by toVisitListViewModel.getAllLongitudes().collectAsState(emptyList())
@@ -163,9 +172,10 @@ fun MapScreen(
                 }) {
                     Text(text = "Start location monitoring")
                 }
-//                Text(
-//                    text = "Location: ${getLocationText(mapViewModel.locationState.value)}"
-//                )
+                Text(
+                    text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
+                            "${mapViewModel.locationState.value?.longitude}"
+                )
             }
 
         } else {
