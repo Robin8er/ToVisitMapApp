@@ -4,6 +4,7 @@ import android.Manifest
 import android.location.Geocoder
 import android.os.Build
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -175,52 +176,6 @@ fun MapScreen(
             )
         )
 
-        //old topappbar is above
-
-//
-//        val fineLocationPermissionState = rememberPermissionState(
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        )
-//        if (fineLocationPermissionState.status.isGranted) {
-//            Column {
-//
-//                Button(onClick = {
-//                    mapViewModel.startLocationMonitoring()
-//                }) {
-//                    Text(text = "Start location monitoring")
-//                }
-//                Text(
-//                    text = "Location: ${mapViewModel.locationState.value?.latitude}, " +
-//                            "${mapViewModel.locationState.value?.longitude}"
-//                )
-//            }
-//
-//        } else {
-//            Column {
-//                val permissionText = if (fineLocationPermissionState.status.shouldShowRationale) {
-//                    "Please consider giving permission"
-//                } else {
-//                    "Give permission for location"
-//                }
-//                Text(text = permissionText)
-//                Button(onClick = {
-//                    fineLocationPermissionState.launchPermissionRequest()
-//                }) {
-//                    Text(text = "Request permission")
-//                }
-//            }
-//        }
-//
-//        var isSatellite by remember {
-//            mutableStateOf(false)
-//        }
-//        Switch(checked = isSatellite, onCheckedChange = {
-//            isSatellite = it
-//            mapProperties = mapProperties.copy(
-//                mapType = if (isSatellite) MapType.SATELLITE else MapType.NORMAL
-//            )
-//        })
-
         if (showSearchDialog) {
             SearchToVisitListDialog({ showSearchDialog = false }, onNavigateToToVisitList)
         }
@@ -370,13 +325,18 @@ private fun AddLocationForm(
                 label = { Text(text = "Description of location") }
             )
 
-            //very basic slider that displays position below
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Priority:")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
             )
+            Row(horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(10.dp)) {
+                Text(text = "❓")
+                Text(text = "❗")
+                Text(text = "‼️")
+            }
             Text(text = toVisitItemPriority.toString())
 
             SpinnerSample(
