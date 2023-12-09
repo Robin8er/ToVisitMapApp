@@ -118,9 +118,7 @@ fun MapScreen(
         else LatLng(0.0, 0.0))
     }
 
-    val latList by toVisitListViewModel.getAllLatitudes().collectAsState(emptyList())
-
-    val longList by toVisitListViewModel.getAllLongitudes().collectAsState(emptyList())
+    val locationsList by toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
 
     Column {
         TopAppBar(
@@ -214,14 +212,12 @@ fun MapScreen(
         ) {
 
 
-            for (i in (latList.indices)) {
-                val curLat = latList[i]
-                val curLong = longList[i]
-                var posLatLng = LatLng(curLat, curLong)
+            for (location in locationsList) {
+                var posLatLng = LatLng(location.latitude, location.longitude)
                 Marker(
                     state = MarkerState(position = posLatLng),
-                    title = "Name that the user gives location here",
-                    snippet = "information that user gives..."
+                    title = location.name,
+                    snippet = location.description
                 )
             }
         }
@@ -230,7 +226,6 @@ fun MapScreen(
             AddLocationForm(toVisitListViewModel,
                 {
                     showAddLocationDialog = false
-//                    mapViewModel.addMarkerPosition(currentPosition)
                 },
                 currentPosition)
         }
