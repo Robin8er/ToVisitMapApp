@@ -57,8 +57,10 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
@@ -209,7 +211,8 @@ fun MapScreen(
                 Marker(
                     state = MarkerState(position = posLatLng),
                     title = location.name,
-                    snippet = location.description
+                    snippet = location.description,
+                    icon = if (location.haveVisited) BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN) else BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
                 )
             }
         }
