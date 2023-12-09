@@ -17,7 +17,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -35,20 +39,13 @@ import hu.ait.tovisitmapapp.R
 import kotlinx.coroutines.delay
 
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun OpeningScreen(mapViewModel: MyMapViewModel = hiltViewModel(),
-                  onNavigateToMap: () -> Unit) = Box(
-    Modifier
-        .fillMaxSize()
-) {
+fun OpeningScreen(
+    onNavigateToMap: () -> Unit
+) = Box(Modifier.fillMaxSize()) {
     val scale = remember {
         Animatable(0.0f)
     }
-
-    val fineLocationPermissionState = rememberPermissionState(
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
 
     LaunchedEffect(key1 = Unit) {
         scale.animateTo(
@@ -57,18 +54,8 @@ fun OpeningScreen(mapViewModel: MyMapViewModel = hiltViewModel(),
                 OvershootInterpolator(4f).getInterpolation(it)
             })
         )
-        // 3 second delay then navigate to main screen
-//        delay(3000)
-
-        if (fineLocationPermissionState.status.isGranted) {
-            onNavigateToMap()
-        }
-        else(
-            delay(10000000)
-        )
-
-
-
+        delay(1000)
+        onNavigateToMap()
     }
 
     Text(
@@ -80,7 +67,6 @@ fun OpeningScreen(mapViewModel: MyMapViewModel = hiltViewModel(),
             .padding(bottom = 60.dp)
     )
 
-
     Image(
         painter = painterResource(id = R.drawable.travellist),
         contentDescription = "Opening Icon",
@@ -89,13 +75,5 @@ fun OpeningScreen(mapViewModel: MyMapViewModel = hiltViewModel(),
             .fillMaxSize().padding(40.dp)
             .scale(scale.value)
     )
-
-    Button(onClick = {
-        mapViewModel.startLocationMonitoring()
-
-    }) {
-        Text(text = "Give permission to start location monitoring?")
-    }
-
 }
 
