@@ -335,7 +335,7 @@ private fun AddLocationForm(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority: ${toVisitItemPriority.toString()}")
+            Text(text = "Priority: $toVisitItemPriority")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
