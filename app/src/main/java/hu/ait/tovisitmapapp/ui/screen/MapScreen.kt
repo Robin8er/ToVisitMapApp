@@ -274,6 +274,7 @@ private fun AddLocationForm(
 
         var nameError by rememberSaveable {mutableStateOf(false)}
 
+
         var geocodeText = "Total Error"
         val context = LocalContext.current
         val geocoder = Geocoder(context, Locale.getDefault())
@@ -335,7 +336,7 @@ private fun AddLocationForm(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority: $toVisitItemPriority")
+            Text(text = "Priority:")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }

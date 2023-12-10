@@ -61,7 +61,7 @@ fun OpeningScreen(
     Text(
         text = "a new way to keep track of where you want to go!",
         textAlign = TextAlign.Center,
-        fontSize = 30.sp,
+        fontSize = 26.sp,
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(bottom = 60.dp)

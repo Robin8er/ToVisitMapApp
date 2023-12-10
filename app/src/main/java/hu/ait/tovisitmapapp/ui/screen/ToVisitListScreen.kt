@@ -64,6 +64,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
+import hu.ait.tovisitmapapp.ui.theme.GoodBlue
+import hu.ait.tovisitmapapp.ui.theme.GoodRed
+
 //import com.wajahatkarim.flippable.FlipAnimationType
 //import com.wajahatkarim.flippable.Flippable
 //import com.wajahatkarim.flippable.FlippableController
@@ -123,7 +126,7 @@ fun ToVisitListScreen(
             }
 
             if (toVisitList.isEmpty()) {
-                Text(text = "No Items")
+                Text(text = "No places added! Go to the map and find places you want to go!")
             } else {
 
                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
@@ -386,7 +389,7 @@ fun ToVisitItemCard(
                     modifier = Modifier.clickable {
                         onRemoveItem()
                     },
-                    tint = Color.Red
+                    tint = GoodRed
                 )
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Icon(
@@ -395,7 +398,7 @@ fun ToVisitItemCard(
                     modifier = Modifier.clickable {
                         onEditItem(toVisitItem)
                     },
-                    tint = Color.Blue
+                    tint = GoodBlue
                 )
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Icon(
