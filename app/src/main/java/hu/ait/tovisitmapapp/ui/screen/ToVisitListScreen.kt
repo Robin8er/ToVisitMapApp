@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -241,6 +242,8 @@ private fun AddNewToVisitItemForm(
                 label = { Text(text = "Enter description of place here.") }
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Priority: $toVisitItemPriority")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
@@ -254,7 +257,6 @@ private fun AddNewToVisitItemForm(
                 Text(text = "🏃",
                     fontSize = 30.sp)
             }
-            Text(text = toVisitItemPriority.toString())
 
             SpinnerSample(
                 listOf("Dining",
@@ -359,12 +361,12 @@ fun ToVisitItemCard(
             .animateContentSize()) {
             Row(
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(10.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = if (toVisitItem.priority < (1/3)) "🧍"
-                    else if (toVisitItem.priority > (2/3)) "🏃"
+                Text(text = if (toVisitItem.priority < 0.25f) "🧍"
+                    else if (toVisitItem.priority > 0.75f) "🏃"
                     else "🚶",
                     fontSize = 30.sp)
                 Image(
