@@ -356,12 +356,12 @@ fun ToVisitItemCard(
             .animateContentSize()) {
             Row(
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(10.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = if (toVisitItem.priority < (1/3)) "🧍"
-                    else if (toVisitItem.priority > (2/3)) "🏃"
+                Text(text = if (toVisitItem.priority < 0.333f) "🧍"
+                    else if (toVisitItem.priority > 0.667f) "🏃"
                     else "🚶",
                     fontSize = 30.sp)
                 Image(
