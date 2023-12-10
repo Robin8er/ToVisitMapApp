@@ -192,7 +192,7 @@ fun MapScreen(
             onMapClick = {
                 currentPosition = it
                 showAddLocationDialog = true
-                val cameraPosition = CameraPosition.Builder() // TODO: don't let it zoom out
+                val cameraPosition = CameraPosition.Builder()
                     .target(it)
                     .zoom(17.5f)
                     .build()
@@ -274,14 +274,18 @@ private fun AddLocationForm(
 
         var nameError by rememberSaveable {mutableStateOf(false)}
 
-        var geocodeText = "Error"
+        var geocodeText = "Total Error"
         val context = LocalContext.current
         val geocoder = Geocoder(context, Locale.getDefault())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            geocodeText = geocoder.getFromLocation(
-                position.latitude,
-                position.longitude,
-                3)?.get(0)?.getAddressLine(0) ?: "Error"
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                geocodeText = geocoder.getFromLocation(
+                    position.latitude,
+                    position.longitude,
+                    3)?.get(0)?.getAddressLine(0) ?: ""
+            }
+        } catch (e: Exception) {
+            geocodeText = "N/A"
         }
 
         toVisitItemAddress = geocodeText
@@ -331,7 +335,7 @@ private fun AddLocationForm(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority: ${toVisitItemPriority.toString()}")
+            Text(text = "Priority: $toVisitItemPriority")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }

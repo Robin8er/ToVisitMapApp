@@ -243,10 +243,13 @@ private fun AddNewToVisitItemForm(
                 onValueChange = { toVisitItemPriority = it }
             )
             Row(horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(10.dp)) {
-                Text(text = "❓")
-                Text(text = "❗")
-                Text(text = "‼️")
+                modifier = Modifier.fillMaxWidth()) {
+                Text(text = "🧍",
+                    fontSize = 30.sp)
+                Text(text = "🚶",
+                    fontSize = 30.sp)
+                Text(text = "🏃",
+                    fontSize = 30.sp)
             }
             Text(text = toVisitItemPriority.toString())
 
@@ -349,7 +352,7 @@ fun ToVisitItemCard(
         }
 
         Column(modifier = Modifier
-            .padding(20.dp)
+            .padding(10.dp)
             .animateContentSize()) {
             Row(
                 modifier = Modifier
@@ -357,6 +360,10 @@ fun ToVisitItemCard(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(text = if (toVisitItem.priority < (1/3)) "🧍"
+                    else if (toVisitItem.priority > (2/3)) "🏃"
+                    else "🚶",
+                    fontSize = 30.sp)
                 Image(
                     painter = painterResource(id = toVisitItem.category.getIcon()), // called using int id
                     contentDescription = "Category",
@@ -364,10 +371,10 @@ fun ToVisitItemCard(
                         .size(40.dp)
                         .padding(end = 10.dp)
                 )
-                Column {
-                    Text(toVisitItem.name, modifier = Modifier.fillMaxWidth(0.4f))
-                    Text("Priority: ${toVisitItem.priority}", modifier = Modifier.fillMaxWidth(0.4f))
-                }
+//                Column {
+                Text(toVisitItem.name, modifier = Modifier.fillMaxWidth(0.5f))
+//                    Text("Priority: ${toVisitItem.priority}", modifier = Modifier.fillMaxWidth(0.4f))
+//                }
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Checkbox(
                     checked = toVisitItem.haveVisited,
