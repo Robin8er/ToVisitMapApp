@@ -126,7 +126,11 @@ fun MapScreen(
         mutableStateOf(if (mapViewModel.locationState.value != null)
             LatLng(mapViewModel.locationState.value!!.latitude,
                 mapViewModel.locationState.value!!.longitude)
-        else LatLng(0.0, 0.0))
+        else LatLng(47.56251658, 19.05498918))
+    }
+
+    var firstClick by remember {
+        mutableStateOf(true)
     }
 
     val locationsList by toVisitListViewModel.getAllToVisitList().collectAsState(emptyList())
@@ -157,6 +161,23 @@ fun MapScreen(
                 IconButton(onClick = {
                     if (fineLocationPermissionState.status.isGranted) {
                         mapViewModel.startLocationMonitoring()
+                        if (!firstClick) {
+                            currentLocation = if (mapViewModel.locationState.value != null)
+                                LatLng(mapViewModel.locationState.value!!.latitude,
+                                    mapViewModel.locationState.value!!.longitude)
+                            else LatLng(47.56251658, 19.05498918)
+                            val currentCameraLocation = CameraPosition.Builder()
+                                .target(currentLocation)
+                                .zoom(15f)
+                                .build()
+                            coroutineScope.launch {
+                                cameraState.animate(
+                                    CameraUpdateFactory.newCameraPosition(currentCameraLocation),
+                                    1000)
+                            }
+                        } else {
+                            firstClick = false
+                        }
                     } else {
                         fineLocationPermissionState.launchPermissionRequest()
                     }
@@ -207,12 +228,16 @@ fun MapScreen(
 
 
             for (location in locationsList) {
-                var posLatLng = LatLng(location.latitude, location.longitude)
+                val posLatLng = LatLng(location.latitude, location.longitude)
+                val priorityEmoji = if (location.priority < 0.25f) "🧍"
+                    else if (location.priority > 0.75f) "🏃"
+                        else "🚶"
                 Marker(
                     state = MarkerState(position = posLatLng),
-                    title = location.name,
+                    title = "${location.name} $priorityEmoji",
                     snippet = location.description,
-                    icon = if (location.haveVisited) BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN) else BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                    icon = if (location.haveVisited) BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                    else BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
                 )
             }
         }
