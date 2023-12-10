@@ -243,7 +243,7 @@ private fun AddNewToVisitItemForm(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority: $toVisitItemPriority")
+            Text(text = "Priority:")
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
