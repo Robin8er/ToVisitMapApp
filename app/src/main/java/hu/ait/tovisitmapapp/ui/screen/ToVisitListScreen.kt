@@ -32,6 +32,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,9 +63,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
 import hu.ait.tovisitmapapp.ui.theme.GoodBlue
@@ -97,11 +102,17 @@ fun ToVisitListScreen(
         mutableStateOf(null)
     }
 
+    val robotoFont = FontFamily(
+        Font(R.font.roboto, FontWeight.Light)
+    )
+
+
+
     Column{
         Column {
             TopAppBar(
                 title = {
-                    Text("To Visit List")
+                    Text("the list", fontFamily = robotoFont, fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     IconButton(onClick = {
@@ -356,6 +367,10 @@ fun ToVisitItemCard(
             mutableStateOf(false)
         }
 
+        val robotoFont = FontFamily(
+            Font(R.font.roboto, FontWeight.Light)
+        )
+
         Column(modifier = Modifier
             .padding(10.dp)
             .animateContentSize()) {
@@ -422,8 +437,10 @@ fun ToVisitItemCard(
                     text = toVisitItem.description,
                     style = TextStyle(
                         fontSize = 12.sp,
+                        fontStyle = FontStyle.Italic
                     )
                 )
+                Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = "Address: ${toVisitItem.address}",
                     style = TextStyle(

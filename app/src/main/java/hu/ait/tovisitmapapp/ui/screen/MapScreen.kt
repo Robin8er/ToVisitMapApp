@@ -1,8 +1,10 @@
 package hu.ait.tovisitmapapp.ui.screen
 
 import android.Manifest
+
 import android.location.Geocoder
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +48,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -68,11 +73,14 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import hu.ait.tovisitmapapp.R
 import hu.ait.tovisitmapapp.data.ToVisitCategory
 import hu.ait.tovisitmapapp.data.ToVisitItem
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -86,6 +94,11 @@ fun MapScreen(
     // AIzaSyDyN5nBZKlSi-56GMEE2Wqy5fMlhMBhYMw
 
     // local state with initial coords
+
+    val robotoFont = FontFamily(
+        Font(R.font.roboto, FontWeight.Light)
+    )
+
     var cameraState = rememberCameraPositionState {
         CameraPosition.fromLatLngZoom(
             LatLng(47.0, 19.0), 10f // zoom between 1 and 25
@@ -140,7 +153,8 @@ fun MapScreen(
 
         TopAppBar(
             title = {
-                Text("To Visit List")
+                Text("the map", fontFamily = robotoFont,
+                    fontWeight = FontWeight.Bold)
             },
 
             actions = {
