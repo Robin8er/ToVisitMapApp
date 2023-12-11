@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -27,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -51,8 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -60,12 +55,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
@@ -90,10 +83,6 @@ fun MapScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    // API key:
-    // AIzaSyDyN5nBZKlSi-56GMEE2Wqy5fMlhMBhYMw
-
-    // local state with initial coords
 
     val robotoFont = FontFamily(
         Font(R.font.roboto, FontWeight.Light)
@@ -153,7 +142,8 @@ fun MapScreen(
 
         TopAppBar(
             title = {
-                Text("the map", fontFamily = robotoFont,
+                Text(
+                    stringResource(R.string.the_map), fontFamily = robotoFont,
                     fontWeight = FontWeight.Bold)
             },
 
@@ -314,7 +304,7 @@ private fun AddLocationForm(
         var nameError by rememberSaveable {mutableStateOf(false)}
 
 
-        var geocodeText = "Total Error"
+        var geocodeText = stringResource(R.string.declaring)
         val context = LocalContext.current
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
@@ -325,7 +315,7 @@ private fun AddLocationForm(
                     3)?.get(0)?.getAddressLine(0) ?: ""
             }
         } catch (e: Exception) {
-            geocodeText = "N/A"
+            geocodeText = stringResource(R.string.n_a)
         }
 
         toVisitItemAddress = geocodeText
@@ -346,11 +336,11 @@ private fun AddLocationForm(
                     toVisitItemName = it
                     nameError = toVisitItemName == ""
                 },
-                label = { Text(text = "Name of this location") },
+                label = { Text(text = stringResource(R.string.name_of_this_location)) },
                 trailingIcon = {
                     if (nameError) {
                         Icon(
-                            Icons.Filled.Warning, "Error",
+                            Icons.Filled.Warning, stringResource(R.string.error),
                             tint = MaterialTheme.colorScheme.error)
                     }
                 }
@@ -358,7 +348,7 @@ private fun AddLocationForm(
 
             if (nameError) {
                 Text(
-                    text = "Name cannot be empty.",
+                    text = stringResource(R.string.name_cannot_be_empty),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -371,11 +361,11 @@ private fun AddLocationForm(
                 onValueChange = {
                     toVisitItemDescription = it
                 },
-                label = { Text(text = "Description of location") }
+                label = { Text(text = stringResource(R.string.description_of_location)) }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority:")
+            Text(text = stringResource(R.string.priority))
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
@@ -392,16 +382,18 @@ private fun AddLocationForm(
 
 
             SpinnerSample(
-                listOf("Dining",
-                    "Study", "Entertainment", "Other"
+                listOf(stringResource(R.string.dining),
+                    stringResource(R.string.study),
+                    stringResource(R.string.entertainment),
+                    stringResource(R.string.other)
                 ),
                 preselected =
                 when (toVisitItemCategory)
                 {
-                    ToVisitCategory.DINING -> "Dining"
-                    ToVisitCategory.STUDY -> "Study"
-                    ToVisitCategory.ENTERTAINMENT -> "Entertainment"
-                    else -> "Other"
+                    ToVisitCategory.DINING -> stringResource(R.string.dining)
+                    ToVisitCategory.STUDY -> stringResource(R.string.study)
+                    ToVisitCategory.ENTERTAINMENT -> stringResource(R.string.entertainment)
+                    else -> stringResource(R.string.other)
                 },
                 onSelectionChanged = {
                     toVisitItemCategory =
@@ -421,7 +413,7 @@ private fun AddLocationForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = toVisitItemVisited, onCheckedChange = { toVisitItemVisited = it })
-                Text(text = "Visited")
+                Text(text = stringResource(R.string.visited_map))
             }
 
             Row(
@@ -461,7 +453,7 @@ private fun AddLocationForm(
                         onDialogDismiss()
                     }
                 }) {
-                    Text(text = "Save")
+                    Text(text = stringResource(R.string.save))
                 }
             }
         }
@@ -504,18 +496,18 @@ private fun SearchToVisitListDialog(
                     searchName = it
                     nameError = searchName == ""
                 },
-                label = { Text(text = "Search for locations with:") },
+                label = { Text(text = stringResource(R.string.search_for_locations_with)) },
                 trailingIcon = {
                     if (nameError) {
                     Icon(
-                        Icons.Filled.Warning, "Error",
+                        Icons.Filled.Warning, stringResource(R.string.error),
                         tint = MaterialTheme.colorScheme.error)
                 }}
             )
 
             if (nameError) {
                 Text(
-                    text = "Search field cannot be empty.",
+                    text = stringResource(R.string.search_field_cannot_be_empty),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -530,7 +522,7 @@ private fun SearchToVisitListDialog(
                     nameError = true
                 }
             }) {
-                Text(text = "Search")
+                Text(text = stringResource(R.string.search))
             }
         }
     }

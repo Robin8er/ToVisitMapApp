@@ -3,7 +3,6 @@ package hu.ait.tovisitmapapp.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.android.gms.maps.model.LatLng
 import hu.ait.tovisitmapapp.R
 import java.io.Serializable
 

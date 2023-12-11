@@ -55,7 +55,7 @@ fun OpeningScreen(
     )
 
     Text(
-        text = "travelling?",
+        text = stringResource(R.string.travelling),
         textAlign = TextAlign.Center,
         fontFamily = robotoFont,
         fontSize = 30.sp,
@@ -76,7 +76,7 @@ fun OpeningScreen(
     }
 
     Text(
-        text = "a new way to keep track of where you want to go!",
+        text = stringResource(R.string.a_new_way_to_keep_track_of_where_you_want_to_go),
         textAlign = TextAlign.Center,
         fontFamily = robotoFont,
         fontSize = 26.sp,
@@ -87,10 +87,11 @@ fun OpeningScreen(
 
     Image(
         painter = painterResource(id = R.drawable.travellist),
-        contentDescription = "Opening Icon",
+        contentDescription = stringResource(R.string.opening_icon),
         alignment = Alignment.Center,
         modifier = Modifier
-            .fillMaxSize().padding(40.dp)
+            .fillMaxSize()
+            .padding(40.dp)
             .scale(scale.value)
     )
 }

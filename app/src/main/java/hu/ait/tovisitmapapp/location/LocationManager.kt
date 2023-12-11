@@ -2,9 +2,7 @@ package hu.ait.tovisitmapapp.location
 
 import android.annotation.SuppressLint
 import android.location.Location
-import android.os.Build
 import android.os.Looper
-import androidx.annotation.RequiresApi
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Granularity
 import com.google.android.gms.location.LocationCallback
@@ -28,7 +26,6 @@ class LocationManager @Inject constructor(
             Priority.PRIORITY_HIGH_ACCURACY, 1000).apply {
             setMinUpdateDistanceMeters(5f)
             setGranularity(Granularity.GRANULARITY_FINE)
-            //setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
             setWaitForAccurateLocation(true)
         }.build()
 
@@ -36,10 +33,8 @@ class LocationManager @Inject constructor(
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 val location = locationResult.lastLocation
-                // location.time, location.provider, location.distanceTo(location)
-                // geocoding: address from GPS and vice versa - check slides!!
                 if (location != null) {
-                    trySend(location) // this is when the flow sends a new Location out...
+                    trySend(location)
                 }
             }
         }
@@ -47,9 +42,6 @@ class LocationManager @Inject constructor(
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, callBack, Looper.getMainLooper())
 
-        // Suspends the current coroutine until the
-        // channel is either closed or cancelled and invokes
-        // the given block before resuming the coroutine.
         awaitClose { fusedLocationProviderClient.removeLocationUpdates(callBack) }
     }
 }

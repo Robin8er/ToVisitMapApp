@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">ToVisitMapApp</string>
+    <string name="the_list">the list</string>
+    <string name="no_places_added_go_to_the_map_and_find_places_you_want_to_go">No places added! Go to the map and find places you want to go!</string>
+    <string name="enter_name_of_place_to_visit">Enter name of place to visit</string>
+    <string name="error">Error</string>
+    <string name="name_cannot_be_empty">Name cannot be empty.</string>
+    <string name="enter_description_of_place_here">Enter description of place here.</string>
+    <string name="priority">Priority:</string>
+    <string name="dining">Dining</string>
+    <string name="study">Study</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="other">Other</string>
+    <string name="visited">Visited</string>
+    <string name="save">Save</string>
+    <string name="category">Category</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="less">Less</string>
+    <string name="more">More</string>
+    <string name="address">Address: %1$s</string>
+    <string name="co_ords">Co-ords: %1$s, %2$s</string>
+    <string name="the_map">the map</string>
+    <string name="declaring">Declaring</string>
+    <string name="n_a">N/A</string>
+    <string name="name_of_this_location">Name of this location</string>
+    <string name="description_of_location">Description of location</string>
+    <string name="visited_map">Visited</string>
+    <string name="search_for_locations_with">Search for locations with:</string>
+    <string name="search_field_cannot_be_empty">Search field cannot be empty.</string>
+    <string name="search">Search</string>
+    <string name="travelling">travelling?</string>
+    <string name="a_new_way_to_keep_track_of_where_you_want_to_go">a new way to keep track of where you want to go!</string>
+    <string name="opening_icon">Opening Icon</string>
 </resources>

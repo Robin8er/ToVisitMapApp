@@ -22,14 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.ui.text.font.Font
@@ -60,8 +57,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
@@ -73,11 +71,6 @@ import hu.ait.tovisitmapapp.data.ToVisitItem
 import hu.ait.tovisitmapapp.ui.theme.GoodBlue
 import hu.ait.tovisitmapapp.ui.theme.GoodRed
 
-//import com.wajahatkarim.flippable.FlipAnimationType
-//import com.wajahatkarim.flippable.Flippable
-//import com.wajahatkarim.flippable.FlippableController
-//import com.wajahatkarim.flippable_demo.ui.theme.FlippableDemoTheme
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToVisitListScreen(
@@ -86,6 +79,8 @@ fun ToVisitListScreen(
     name: String = ""
 ) {
     val coroutineScope = rememberCoroutineScope()
+
+    val context = LocalContext.current
 
     val toVisitList by
     if (name == "") {
@@ -112,7 +107,7 @@ fun ToVisitListScreen(
         Column {
             TopAppBar(
                 title = {
-                    Text("the list", fontFamily = robotoFont, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.the_list), fontFamily = robotoFont, fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     IconButton(onClick = {
@@ -138,7 +133,7 @@ fun ToVisitListScreen(
             }
 
             if (toVisitList.isEmpty()) {
-                Text(text = "No places added! Go to the map and find places you want to go!")
+                Text(text = stringResource(R.string.no_places_added_go_to_the_map_and_find_places_you_want_to_go))
             } else {
 
                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
@@ -225,11 +220,11 @@ private fun AddNewToVisitItemForm(
                     toVisitItemName = it
                     nameError = toVisitItemName == ""
                 },
-                label = { Text(text = "Enter name of place to visit") },
+                label = { Text(text = stringResource(R.string.enter_name_of_place_to_visit)) },
                 trailingIcon = {
                     if (nameError) {
                         Icon(
-                            Icons.Filled.Warning, "Error",
+                            Icons.Filled.Warning, stringResource(R.string.error),
                             tint = MaterialTheme.colorScheme.error)
                     }
                 }
@@ -237,7 +232,7 @@ private fun AddNewToVisitItemForm(
 
             if (nameError) {
                 Text(
-                    text = "Name cannot be empty.",
+                    text = stringResource(R.string.name_cannot_be_empty),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(start = 16.dp)
@@ -250,11 +245,11 @@ private fun AddNewToVisitItemForm(
                 onValueChange = {
                     toVisitItemDescription = it
                 },
-                label = { Text(text = "Enter description of place here.") }
+                label = { Text(text = stringResource(R.string.enter_description_of_place_here)) }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Priority:")
+            Text(text = stringResource(R.string.priority))
             Slider(
                 value = toVisitItemPriority,
                 onValueChange = { toVisitItemPriority = it }
@@ -270,16 +265,19 @@ private fun AddNewToVisitItemForm(
             }
 
             SpinnerSample(
-                listOf("Dining",
-                    "Study", "Entertainment", "Other"
+                list = listOf(
+                    stringResource(R.string.dining),
+                    stringResource(R.string.study),
+                    stringResource(R.string.entertainment),
+                    stringResource(R.string.other)
                 ),
                 preselected =
                 when (toVisitItemCategory)
                     {
-                        ToVisitCategory.DINING -> "Dining"
-                        ToVisitCategory.STUDY -> "Study"
-                        ToVisitCategory.ENTERTAINMENT -> "Entertainment"
-                        else -> "Other"
+                        ToVisitCategory.DINING -> stringResource(R.string.dining)
+                        ToVisitCategory.STUDY -> stringResource(R.string.study)
+                        ToVisitCategory.ENTERTAINMENT -> stringResource(R.string.entertainment)
+                        else -> stringResource(R.string.other)
                     },
                 onSelectionChanged = {
                     toVisitItemCategory =
@@ -299,7 +297,7 @@ private fun AddNewToVisitItemForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = toVisitItemVisited, onCheckedChange = { toVisitItemVisited = it })
-                Text(text = "Visited")
+                Text(text = stringResource(R.string.visited))
             }
 
             Row(
@@ -339,7 +337,7 @@ private fun AddNewToVisitItemForm(
                         onDialogDismiss()
                     }
                 }) {
-                    Text(text = "Save")
+                    Text(text = stringResource(R.string.save))
                 }
             }
         }
@@ -358,7 +356,7 @@ fun ToVisitItemCard(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation( // shading / shadow behind card
+        elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
         ),
         modifier = Modifier.padding(5.dp)
@@ -385,16 +383,13 @@ fun ToVisitItemCard(
                     else "🚶",
                     fontSize = 30.sp)
                 Image(
-                    painter = painterResource(id = toVisitItem.category.getIcon()), // called using int id
-                    contentDescription = "Category",
+                    painter = painterResource(id = toVisitItem.category.getIcon()),
+                    contentDescription = stringResource(R.string.category),
                     modifier = Modifier
                         .size(40.dp)
                         .padding(end = 10.dp)
                 )
-//                Column {
                 Text(toVisitItem.name, modifier = Modifier.fillMaxWidth(0.5f))
-//                    Text("Priority: ${toVisitItem.priority}", modifier = Modifier.fillMaxWidth(0.4f))
-//                }
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Checkbox(
                     checked = toVisitItem.haveVisited,
@@ -402,7 +397,7 @@ fun ToVisitItemCard(
                 )
                 Icon(
                     imageVector = Icons.Filled.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.delete),
                     modifier = Modifier.clickable {
                         onRemoveItem()
                     },
@@ -411,7 +406,7 @@ fun ToVisitItemCard(
                 Spacer(modifier = Modifier.fillMaxSize(0.05f))
                 Icon(
                     imageVector = Icons.Filled.Build,
-                    contentDescription = "Edit",
+                    contentDescription = stringResource(R.string.edit),
                     modifier = Modifier.clickable {
                         onEditItem(toVisitItem)
                     },
@@ -422,9 +417,9 @@ fun ToVisitItemCard(
                     imageVector = if (expanded)
                         Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = if (expanded) {
-                        "Less"
+                        stringResource(R.string.less)
                     } else {
-                        "More"
+                        stringResource(R.string.more)
                     },
                     modifier = Modifier.clickable {
                         expanded = !expanded
@@ -442,13 +437,17 @@ fun ToVisitItemCard(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "Address: ${toVisitItem.address}",
+                    text = stringResource(R.string.address, toVisitItem.address),
                     style = TextStyle(
                         fontSize = 12.sp,
                     )
                 )
                 Text(
-                    text = "Co-ords: ${toVisitItem.latitude}, ${toVisitItem.longitude}",
+                    text = stringResource(
+                        R.string.co_ords,
+                        toVisitItem.latitude,
+                        toVisitItem.longitude
+                    ),
                     style = TextStyle(
                         fontSize = 12.sp,
                     )
